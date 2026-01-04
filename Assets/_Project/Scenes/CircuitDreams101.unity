@@ -175,6 +175,10 @@ PrefabInstance:
       propertyPath: speedText
       value: 
       objectReference: {fileID: 1370373277}
+    - target: {fileID: 3398106580824784547, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
+      propertyPath: m_Volume
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5618575825336952164, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
       propertyPath: RearVirtualCamera
       value: 
@@ -1269,6 +1273,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4617534024236477276, guid: 194d1078449e6c14d80dae6350d818fd, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4823623270032660749, guid: 194d1078449e6c14d80dae6350d818fd, type: 3}
       propertyPath: m_RootOrder
       value: 2
