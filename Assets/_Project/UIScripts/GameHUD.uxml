@@ -25,4 +25,5 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:Label name="interaction-prompt" text="Press E to Enter" style="position: absolute; bottom: 100px; left: 0; right: 0; -unity-text-align: middle-center; font-size: 24px; color: rgb(255, 255, 255); -unity-font-style: bold; display: none;" />
 </ui:UXML>

@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0.81
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.26699895, g: 0.31959262, b: 0.4528302, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: cdd767f2ca782604487685c187ab67fc, type: 2}
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -853,6 +853,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1663456704294997890, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 962338030}
+    - targetCorrespondingSourceObject: {fileID: 4240896722663811400, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1620289763}
+    - targetCorrespondingSourceObject: {fileID: 4240896722663811400, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1620289764}
   m_SourcePrefab: {fileID: 100100000, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
 --- !u!1 &217901918 stripped
 GameObject:
@@ -1583,7 +1589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolyStang.CameraSwitcher
   rearVirtualCamera: {fileID: 521987149}
-  frontVirtualCamera: {fileID: 0}
+  frontVirtualCamera: {fileID: 1515718882}
   activePriority: 10
   inactivePriority: 5
 --- !u!114 &962338030
@@ -2643,6 +2649,47 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1620289758 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4240896722663811400, guid: 7014cc0a88068fa42a71646af935782e, type: 3}
+  m_PrefabInstance: {fileID: 197387492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1620289763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620289758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 080a85d128780964bb53c1d3bab0643b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VehicleInteraction
+  hudController: {fileID: 105808052}
+  interactionRadius: 3
+  showDebugGizmos: 1
+--- !u!65 &1620289764
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620289758}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.9795895, y: 1.2086515, z: 5.0523677}
+  m_Center: {x: 0.00000008940697, y: 0.9125768, z: -0.0508523}
 --- !u!1 &1644277371
 GameObject:
   m_ObjectHideFlags: 3
@@ -3466,6 +3513,7 @@ GameObject:
   - component: {fileID: 3543048676639395793}
   - component: {fileID: 974238577918776225}
   - component: {fileID: 7018120647631927646}
+  - component: {fileID: 7018120647631927647}
   m_Layer: 8
   m_Name: PlayerArmature
   m_TagString: Player
@@ -6380,6 +6428,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b820409d1d7534faf20625cabf525f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StateAwareCharacterController
+--- !u!65 &7018120647631927647
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 974238577918776237}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &7082370648605438703
 Transform:
   m_ObjectHideFlags: 0
