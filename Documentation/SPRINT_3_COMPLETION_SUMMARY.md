@@ -14,8 +14,9 @@
 - **StateAwareCharacterController.cs** - Enables/disables walking controls based on state
 - **CameraStateManager.cs** - Manages camera priority transitions between states
 - State persistence across scenes using `DontDestroyOnLoad(transform.root)`
+- The system is functional but not at a high standard after transitions
 
-**Achievement:** Player can seamlessly switch between driving and walking modes with proper controller/camera activation.
+**Achievement:** Player can switch between driving and walking modes with proper controller/camera activation.
 
 ---
 
@@ -37,6 +38,7 @@
 - State persistence (player state, cash, last scene)
 - Async loading with proper timing for spawn point initialization
 - Support for both walking and driving transitions
+- Player control after transitions needs fixing
 
 **Achievement:** Player can transition between scenes (track ↔ town) with state preservation.
 
