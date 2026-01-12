@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// Manages the in-game HUD elements (speedometer, cash display, interaction prompts)
+/// Manages the in-game HUD elements (speedometer, cash display)
 /// Attach this to a GameObject in your scene with a UIDocument component
 /// </summary>
 public class HUDController : MonoBehaviour
@@ -23,7 +23,6 @@ public class HUDController : MonoBehaviour
     private Label speedValueLabel;
     private Label cashCurrentLabel;
     private Label cashGoalLabel;
-    private Label interactionPromptLabel; // "Press E to Enter/Exit" prompt
     
     private float updateTimer;
     
@@ -43,17 +42,14 @@ public class HUDController : MonoBehaviour
         speedValueLabel = root.Q<Label>("speed-value");
         cashCurrentLabel = root.Q<Label>("cash-current");
         cashGoalLabel = root.Q<Label>("cash-goal");
-        interactionPromptLabel = root.Q<Label>("interaction-prompt");
         
         // Validate references
         if (speedValueLabel == null) Debug.LogError("HUDController: 'speed-value' label not found!");
         if (cashCurrentLabel == null) Debug.LogError("HUDController: 'cash-current' label not found!");
         if (cashGoalLabel == null) Debug.LogError("HUDController: 'cash-goal' label not found!");
-        if (interactionPromptLabel == null) Debug.LogError("HUDController: 'interaction-prompt' label not found!");
         
         // Initialize displays
         UpdateCashDisplay();
-        HideInteractionPrompt(); // Start hidden
     }
     
     void Update()
@@ -151,30 +147,36 @@ public class HUDController : MonoBehaviour
         return currentCash >= cashGoal;
     }
     
-    // === INTERACTION PROMPT METHODS (Phase 3) ===
+    /// <summary>
+    /// Set cash amount directly (for state restoration after scene transitions)
+    /// </summary>
+    public void SetCash(float amount)
+    {
+        currentCash = amount;
+        UpdateCashDisplay();
+        Debug.Log($"Cash set to: ${currentCash:N0}");
+    }
+    
+    // === VEHICLE INTERACTION PROMPTS ===
+    // TODO: These should be implemented with proper UI Toolkit elements
+    // For now, they're placeholder methods to prevent compilation errors
     
     /// <summary>
-    /// Show "Press E to Enter" prompt (called when near vehicle)
+    /// Show "Press E to Enter Vehicle" prompt
     /// </summary>
     public void ShowEnterPrompt()
     {
-        if (interactionPromptLabel != null)
-        {
-            interactionPromptLabel.text = "Press E to Enter";
-            interactionPromptLabel.style.display = DisplayStyle.Flex;
-        }
+        // TODO: Show UI prompt element
+        Debug.Log("[HUD] Show Enter Vehicle Prompt");
     }
     
     /// <summary>
-    /// Show "Press E to Exit" prompt (called when driving)
+    /// Show "Press E to Exit Vehicle" prompt
     /// </summary>
     public void ShowExitPrompt()
     {
-        if (interactionPromptLabel != null)
-        {
-            interactionPromptLabel.text = "Press E to Exit";
-            interactionPromptLabel.style.display = DisplayStyle.Flex;
-        }
+        // TODO: Show UI prompt element
+        Debug.Log("[HUD] Show Exit Vehicle Prompt");
     }
     
     /// <summary>
@@ -182,9 +184,7 @@ public class HUDController : MonoBehaviour
     /// </summary>
     public void HideInteractionPrompt()
     {
-        if (interactionPromptLabel != null)
-        {
-            interactionPromptLabel.style.display = DisplayStyle.None;
-        }
+        // TODO: Hide UI prompt element
+        Debug.Log("[HUD] Hide Interaction Prompt");
     }
 }

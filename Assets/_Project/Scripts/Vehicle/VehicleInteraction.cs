@@ -45,7 +45,7 @@ public class VehicleInteraction : MonoBehaviour
         
         if (hudController == null)
         {
-            hudController = FindObjectOfType<HUDController>();
+            hudController = FindFirstObjectByType<HUDController>();
             if (hudController == null)
             {
                 Debug.LogError("VehicleInteraction: HUDController not found!");

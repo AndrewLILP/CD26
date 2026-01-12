@@ -83,6 +83,25 @@ public class PlayerStateManager : MonoBehaviour
     private Quaternion lastCarRotation;
     #endregion
 
+    void Start()
+    {
+        // Make character and vehicle persist across scenes
+        // NOTE: DontDestroyOnLoad only works on root GameObjects, so we get the root transform
+        if (characterObject != null)
+        {
+            Transform characterRoot = characterObject.transform.root;
+            DontDestroyOnLoad(characterRoot.gameObject);
+            Debug.Log($"PlayerStateManager: Character root '{characterRoot.name}' set to DontDestroyOnLoad");
+        }
+        
+        if (vehicleObject != null)
+        {
+            Transform vehicleRoot = vehicleObject.transform.root;
+            DontDestroyOnLoad(vehicleRoot.gameObject);
+            Debug.Log($"PlayerStateManager: Vehicle root '{vehicleRoot.name}' set to DontDestroyOnLoad");
+        }
+    }
+
     #region State Transition Methods
     
     /// <summary>
@@ -165,14 +184,12 @@ public class PlayerStateManager : MonoBehaviour
         if (vehicleObject != null)
         {
             vehicleObject.SetActive(true);
-            
             // Store car's position when entering (for when we exit)
             lastCarPosition = vehicleObject.transform.position;
             lastCarRotation = vehicleObject.transform.rotation;
         }
         
         // Deactivate character with delay (allows camera blend)
-        // Character isn't visible from driving cameras anyway
         if (characterObject != null)
             StartCoroutine(DelayedDisable(characterObject));
         
@@ -192,16 +209,6 @@ public class PlayerStateManager : MonoBehaviour
         
         // Fire event FIRST (camera switches to high priority)
         OnEnterWalking?.Invoke();
-        
-        // Ensure vehicle stays visible (but scripts disabled via StateAwareCarController)
-        if (vehicleObject != null)
-        {
-            vehicleObject.SetActive(true);
-            
-            // Update car position tracking
-            lastCarPosition = vehicleObject.transform.position;
-            lastCarRotation = vehicleObject.transform.rotation;
-        }
         
         // Activate character immediately
         if (characterObject != null)
@@ -228,6 +235,16 @@ public class PlayerStateManager : MonoBehaviour
                     characterObject.transform.position = spawnPosition;
                 }
             }
+        }
+        
+        // Deactivate vehicle with delay (allows camera blend + keeps cameras alive)
+        if (vehicleObject != null)
+        {
+            // Update car position before disabling (in case it moved since entering driving)
+            lastCarPosition = vehicleObject.transform.position;
+            lastCarRotation = vehicleObject.transform.rotation;
+            
+            StartCoroutine(DelayedDisable(vehicleObject));
         }
         
         // Hide speedometer in HUD (Phase 3)
@@ -268,7 +285,7 @@ public class PlayerStateManager : MonoBehaviour
 
     void Update()
     {
-        // Track car position while driving (so we know where to spawn character when exiting)
+        // Track car position while driving (so we know where to spawn character)
         if (currentState == PlayerState.Driving && vehicleObject != null)
         {
             lastCarPosition = vehicleObject.transform.position;

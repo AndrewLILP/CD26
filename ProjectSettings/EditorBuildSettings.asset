@@ -11,6 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/CircuitDreams101.unity
     guid: 2010d2246a4633c49abf1d4b469afaa0
+  - enabled: 1
+    path: Assets/Scenes/TownScene.unity
+    guid: e89849906a514b84194da4fc01269d51
+  - enabled: 1
+    path: Assets/Scenes/GarageInterior.unity
+    guid: 8f115ddabbca7df49989d1d2cc3300b7
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
