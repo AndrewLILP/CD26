@@ -1,191 +1,250 @@
-/* ========================================
-   CD26 - Game HUD Stylesheet
-   Customize colors, sizes, and positioning here!
-   ======================================== */
-
-/* === HUD CONTAINER (Always Visible) === */
+/* === HUD CONTAINER === */
 .hud-container {
     position: absolute;
     width: 100%;
     height: 100%;
-    flex-direction: column;
 }
 
-/* === SHARED INFO PANEL STYLES === */
+/* === INFO PANEL (Top-Right) === */
 .info-panel {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    padding: 15px 20px;
-    border-width: 2px;
-    border-color: rgba(255, 255, 255, 0.3);
+    top: 20px;
+    right: 20px;
 }
 
-/* === SPEEDOMETER (Bottom-Left) === */
-.speedometer {
-    bottom: 30px;
-    left: 30px;
-    flex-direction: row;
-    align-items: flex-end;
-}
-
-.speed-value {
-    font-size: 48px;
-    color: white;
-    -unity-font-style: bold;
-    margin-right: 10px;
-}
-
-.speed-unit {
-    font-size: 24px;
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 8px;
-}
-
-/* === CASH DISPLAY (Top-Right) === */
 .cash-display {
-    top: 30px;
-    right: 30px;
-    flex-direction: column;
-    align-items: flex-end;
+    padding: 15px 25px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-color: rgb(255, 255, 255);
+    border-width: 3px;
+    border-radius: 10px;
 }
 
 .cash-current {
-    font-size: 32px;
-    color: #4CAF50; /* Green for money */
+    font-size: 36px;
+    color: rgb(0, 255, 0);
+    -unity-text-align: middle-right;
     -unity-font-style: bold;
 }
 
 .cash-goal {
     font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgb(200, 200, 200);
+    -unity-text-align: middle-right;
     margin-top: 5px;
 }
 
-/* === PAUSE MENU (Hidden by default) === */
+/* === SPEEDOMETER (Bottom-Left) === */
+.speedometer {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    padding: 20px 30px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-color: rgb(255, 255, 255);
+    border-width: 3px;
+    border-radius: 10px;
+}
+
+.speed-value {
+    font-size: 48px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+}
+
+.speed-unit {
+    font-size: 20px;
+    color: rgb(200, 200, 200);
+    -unity-text-align: middle-center;
+    margin-top: 5px;
+}
+
+/* === INTERACTION PROMPT (Bottom-Center) === */
+.interaction-prompt {
+    position: absolute;
+    bottom: 120px;
+    left: 50%;
+    translate: -50% 0;
+    padding: 15px 40px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-color: rgb(255, 255, 255);
+    border-width: 3px;
+    border-radius: 8px;
+}
+
+.interaction-prompt.hidden {
+    display: none;
+}
+
+.interaction-text {
+    font-size: 22px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    white-space: nowrap;
+}
+
+/* === PAUSE MENU === */
 .pause-menu {
     position: absolute;
     width: 100%;
     height: 100%;
-    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
     align-items: center;
+    justify-content: center;
 }
 
 .pause-menu.hidden {
     display: none;
 }
 
-/* Semi-transparent dark overlay */
-.pause-background {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
-/* Central pause panel */
 .pause-panel {
-    width: 500px;
-    background-color: rgba(30, 30, 30, 0.95);
-    border-radius: 20px;
-    padding: 40px;
+    width: 400px;
+    padding: 30px;
+    background-color: rgb(40, 40, 40);
+    border-color: rgb(255, 255, 255);
     border-width: 3px;
-    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
 }
 
 .pause-title {
     font-size: 48px;
-    color: white;
+    color: rgb(255, 255, 255);
+    -unity-text-align: upper-center;
     -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    margin-bottom: 30px;
-    letter-spacing: 5px;
-}
-
-/* === VOLUME SECTION === */
-.menu-section {
     margin-bottom: 30px;
 }
 
 .volume-label {
     font-size: 20px;
-    color: white;
+    color: rgb(255, 255, 255);
     margin-bottom: 10px;
 }
 
 .volume-slider {
-    height: 30px;
     margin-bottom: 10px;
 }
 
-/* Customize slider colors */
-.volume-slider .unity-base-slider__tracker {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 5px;
-}
-
-.volume-slider .unity-base-slider__dragger {
-    background-color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-}
-
 .volume-percentage {
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 18px;
+    color: rgb(200, 200, 200);
     -unity-text-align: middle-center;
-}
-
-/* === BUTTONS === */
-.button-container {
-    flex-direction: column;
-    margin-top: 20px;
+    margin-bottom: 30px;
 }
 
 .menu-button {
-    height: 60px;
-    font-size: 24px;
+    height: 50px;
+    font-size: 20px;
     margin-bottom: 15px;
-    border-radius: 10px;
+    background-color: rgb(80, 80, 80);
+    border-color: rgb(255, 255, 255);
     border-width: 2px;
-    transition-duration: 0.2s;
+    color: rgb(255, 255, 255);
+    -unity-font-style: bold;
 }
 
-.resume-button {
-    background-color: rgba(76, 175, 80, 0.8); /* Green */
-    border-color: rgba(76, 175, 80, 1);
-    color: white;
+.menu-button:hover {
+    background-color: rgb(120, 120, 120);
 }
 
-.resume-button:hover {
-    background-color: rgba(76, 175, 80, 1);
-    scale: 1.05;
+/* === MISSION PANEL === */
+.mission-panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
-.quit-button {
-    background-color: rgba(244, 67, 54, 0.8); /* Red */
-    border-color: rgba(244, 67, 54, 1);
-    color: white;
+.mission-panel.hidden {
+    display: none;
 }
 
-.quit-button:hover {
-    background-color: rgba(244, 67, 54, 1);
-    scale: 1.05;
+/* === RETRO BORDER FRAME === */
+.mission-border {
+    width: 700px;
+    padding: 25px;
+    background-color: rgb(10, 37, 64);
+    border-color: rgb(0, 255, 255);
+    border-width: 5px;
 }
 
-/* ========================================
-   CUSTOMIZATION TIPS:
-   
-   - Change colors: rgba(R, G, B, Alpha)
-   - Change sizes: font-size, width, height
-   - Change positions: top, bottom, left, right
-   - Change spacing: margin, padding
-   - Border styles: border-width, border-color, border-radius
-   
-   Example: Make speedometer bigger
-   .speed-value { font-size: 60px; }
-   
-   Example: Move cash display lower
-   .cash-display { top: 100px; }
-   ======================================== */
+/* === MISSION HEADER === */
+.mission-header {
+    font-size: 28px;
+    color: rgb(0, 255, 255);
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+}
+
+/* === MISSION NAME === */
+.mission-name {
+    font-size: 42px;
+    color: rgb(255, 255, 255);
+    -unity-text-align: upper-center;
+    -unity-font-style: bold;
+    margin-bottom: 30px;
+}
+
+/* === MISSION DESCRIPTION === */
+.mission-description {
+    font-size: 20px;
+    color: rgb(220, 220, 220);
+    -unity-text-align: upper-left;
+    white-space: normal;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-color: rgb(0, 180, 180);
+    border-width: 2px;
+}
+
+/* === REWARD CONTAINER === */
+.reward-container {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    padding: 15px;
+    background-color: rgba(0, 255, 255, 0.15);
+    border-color: rgb(0, 255, 255);
+    border-width: 3px;
+}
+
+.reward-label {
+    font-size: 22px;
+    color: rgb(0, 255, 255);
+    -unity-font-style: bold;
+    margin-right: 15px;
+}
+
+.mission-reward-value {
+    font-size: 32px;
+    color: rgb(0, 255, 0);
+    -unity-font-style: bold;
+}
+
+/* === MISSION BUTTON === */
+.mission-button {
+    height: 60px;
+    font-size: 22px;
+    color: rgb(0, 0, 0);
+    background-color: rgb(0, 255, 255);
+    border-color: rgb(255, 255, 255);
+    border-width: 4px;
+    -unity-font-style: bold;
+    margin-top: 10px;
+}
+
+.mission-button:hover {
+    background-color: rgb(0, 220, 220);
+    border-color: rgb(0, 255, 255);
+}
+
+.mission-button:active {
+    background-color: rgb(0, 180, 180);
+}

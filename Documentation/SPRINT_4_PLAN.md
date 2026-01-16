@@ -17,6 +17,13 @@ Enable player to interact with NPCs and inspect properties, creating the foundat
 
 ## Key Features
 1. **Mission 1:** "First Lap" - Complete timed lap, earn $500
+- polish needed: 
+       - changing from driving to walking doesnt work anymore
+       - Add visual enhancements:
+       - ✨ Mission completion UI panel (match 1992 aesthetic)
+       - 🏁 Lap time display during race
+       - 📊 Show checkpoint progress (1/2, 2/2)
+       - 🎵 Sound effects for checkpoint/completion
 2. **Mission 2:** "Coffee Run" - Talk to Maria & Uncle Ray, learn financial concepts
 3. **Dialogue System:** 1992 retro aesthetic (monospace font, scanlines)
 4. **Property Inspection:** View cafe & garage financial data on proximity

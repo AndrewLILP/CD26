@@ -1,29 +1,40 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Project/UIScripts/GameHUD.uss?fileID=7433441132597879392&amp;guid=035421176377ae040932ab49b9abfcd5&amp;type=3#GameHUD"/>
     <ui:VisualElement name="hud-container" class="hud-container">
-        <ui:VisualElement name="speedometer-panel" class="info-panel speedometer">
-            <ui:Label text="0" name="speed-value" class="speed-value"/>
-            <ui:Label text="km/h" name="speed-unit" class="speed-unit"/>
+        <ui:VisualElement name="info-panel" class="info-panel">
+            <ui:VisualElement name="cash-display" class="cash-display">
+                <ui:Label name="cash-current" text="$0" class="cash-current"/>
+                <ui:Label name="cash-goal" text="/ $10,000 Goal" class="cash-goal"/>
+            </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="cash-panel" class="info-panel cash-display">
-            <ui:Label text="$0" name="cash-current" class="cash-current"/>
-            <ui:Label text="/ $10,000 Goal" name="cash-goal" class="cash-goal"/>
+        <ui:VisualElement name="speedometer" class="speedometer">
+            <ui:Label name="speed-value" text="0" class="speed-value"/>
+            <ui:Label name="speed-unit" text="km/h" class="speed-unit"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="interaction-prompt" class="interaction-prompt hidden">
+            <ui:Label name="interaction-text" text="Press E to Enter Vehicle" class="interaction-text"/>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="pause-menu" class="pause-menu hidden">
-        <ui:VisualElement name="pause-background" class="pause-background"/>
         <ui:VisualElement name="pause-panel" class="pause-panel">
-            <ui:Label text="PAUSED" name="pause-title" class="pause-title"/>
-            <ui:VisualElement name="volume-container" class="menu-section">
-                <ui:Label text="Car Audio Volume" class="volume-label"/>
-                <ui:Slider name="volume-slider" low-value="0" high-value="1" value="0.75" class="volume-slider"/>
-                <ui:Label text="75%" name="volume-percentage" class="volume-percentage"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="button-container" class="button-container">
-                <ui:Button text="Resume" name="resume-button" class="menu-button resume-button"/>
-                <ui:Button text="Quit to Menu" name="quit-button" class="menu-button quit-button"/>
-            </ui:VisualElement>
+            <ui:Label text="PAUSED" class="pause-title"/>
+            <ui:Label text="Volume" class="volume-label"/>
+            <ui:Slider name="volume-slider" low-value="0" high-value="1" value="0.75" class="volume-slider"/>
+            <ui:Label name="volume-percentage" text="75%" class="volume-percentage"/>
+            <ui:Button name="resume-button" text="Resume" class="menu-button"/>
+            <ui:Button name="quit-button" text="Quit to Menu" class="menu-button"/>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:Label name="interaction-prompt" text="Press E to Enter" style="position: absolute; bottom: 100px; left: 0; right: 0; -unity-text-align: middle-center; font-size: 24px; color: rgb(255, 255, 255); -unity-font-style: bold; display: none;" />
+    <ui:VisualElement name="mission-panel" class="mission-panel hidden">
+        <ui:VisualElement name="mission-border" class="mission-border">
+            <ui:Label name="mission-header" text="MISSION BRIEFING" class="mission-header"/>
+            <ui:Label name="mission-name" text="FIRST LAP" class="mission-name"/>
+            <ui:Label name="mission-description" text="Complete one lap around the track. Finish line is at the start/finish banner." class="mission-description"/>
+            <ui:VisualElement name="reward-container" class="reward-container">
+                <ui:Label text="REWARD:" class="reward-label"/>
+                <ui:Label name="mission-reward" text="$500" class="mission-reward-value"/>
+            </ui:VisualElement>
+            <ui:Button name="mission-accept-button" text="[PRESS ENTER TO START]" class="mission-button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
 </ui:UXML>

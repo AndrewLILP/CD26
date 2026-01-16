@@ -23,6 +23,10 @@ public class HUDController : MonoBehaviour
     private Label speedValueLabel;
     private Label cashCurrentLabel;
     private Label cashGoalLabel;
+
+    private VisualElement interactionPrompt;
+    private Label interactionText;
+
     
     private float updateTimer;
     
@@ -42,14 +46,21 @@ public class HUDController : MonoBehaviour
         speedValueLabel = root.Q<Label>("speed-value");
         cashCurrentLabel = root.Q<Label>("cash-current");
         cashGoalLabel = root.Q<Label>("cash-goal");
+
+        // NEW: Cache interaction prompt
+        interactionPrompt = root.Q<VisualElement>("interaction-prompt");
+        interactionText = root.Q<Label>("interaction-text");
         
         // Validate references
         if (speedValueLabel == null) Debug.LogError("HUDController: 'speed-value' label not found!");
         if (cashCurrentLabel == null) Debug.LogError("HUDController: 'cash-current' label not found!");
         if (cashGoalLabel == null) Debug.LogError("HUDController: 'cash-goal' label not found!");
-        
+        if (interactionPrompt == null) Debug.LogError("HUDController: 'interaction-prompt' not found!");
+        if (interactionText == null) Debug.LogError("HUDController: 'interaction-text' not found!");
+     
         // Initialize displays
         UpdateCashDisplay();
+        HideInteractionPrompt(); // Start hidden
     }
     
     void Update()
@@ -166,25 +177,24 @@ public class HUDController : MonoBehaviour
     /// </summary>
     public void ShowEnterPrompt()
     {
-        // TODO: Show UI prompt element
-        Debug.Log("[HUD] Show Enter Vehicle Prompt");
+        if (interactionPrompt == null || interactionText == null) return;
+        
+        interactionText.text = "Press E to Enter Vehicle";
+        interactionPrompt.RemoveFromClassList("hidden");
     }
-    
-    /// <summary>
-    /// Show "Press E to Exit Vehicle" prompt
-    /// </summary>
+
     public void ShowExitPrompt()
     {
-        // TODO: Show UI prompt element
-        Debug.Log("[HUD] Show Exit Vehicle Prompt");
+        if (interactionPrompt == null || interactionText == null) return;
+        
+        interactionText.text = "Press E to Exit Vehicle";
+        interactionPrompt.RemoveFromClassList("hidden");
     }
-    
-    /// <summary>
-    /// Hide interaction prompt
-    /// </summary>
+
     public void HideInteractionPrompt()
     {
-        // TODO: Hide UI prompt element
-        Debug.Log("[HUD] Hide Interaction Prompt");
+        if (interactionPrompt == null) return;
+        
+        interactionPrompt.AddToClassList("hidden");
     }
 }
