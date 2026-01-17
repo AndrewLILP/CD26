@@ -4,20 +4,14 @@ using Cinemachine;
 namespace PolyStang
 {
     /// <summary>
-    /// Switches between rear and front driving cameras using Cinemachine priority
-    /// Updated for Sprint 3 to use priority-based switching instead of SetActive
+    /// Switches between primary driving camera (FreeLook) and top-down GPS-style view
+    /// Updated for Sprint 4 to delegate to CameraStateManager
     /// </summary>
     public class CameraSwitcher : MonoBehaviour
     {
-        [Header("Virtual Cameras")]
-        public CinemachineVirtualCamera rearVirtualCamera;
-        public CinemachineVirtualCamera frontVirtualCamera;
-
-        [Header("Priority Settings")]
-        [SerializeField] private int activePriority = 10;
-        [SerializeField] private int inactivePriority = 5; // Still higher than walking camera (0)
-
-        private bool isRearActive = true;
+        [Header("Camera Manager Reference")]
+        [Tooltip("Reference to the CameraStateManager that handles camera priorities")]
+        public CameraStateManager cameraStateManager;
 
         // New Input System
         private PlayerInputActions controls;
@@ -25,6 +19,16 @@ namespace PolyStang
         void Awake()
         {
             controls = new PlayerInputActions();
+            
+            // Auto-find CameraStateManager if not assigned
+            if (cameraStateManager == null)
+            {
+                cameraStateManager = FindFirstObjectByType<CameraStateManager>();
+                if (cameraStateManager == null)
+                {
+                    Debug.LogError("CameraSwitcher: CameraStateManager not found! Cannot switch cameras.");
+                }
+            }
         }
 
         void OnEnable()
@@ -39,53 +43,29 @@ namespace PolyStang
             controls.Driving.Disable();
         }
 
-        void Start()
-        {
-            // Set initial camera priorities (rear active)
-            if (rearVirtualCamera != null)
-                rearVirtualCamera.Priority = activePriority;
-            if (frontVirtualCamera != null)
-                frontVirtualCamera.Priority = inactivePriority;
-
-            isRearActive = true;
-        }
-
+        /// <summary>
+        /// Toggle between primary and top-down driving views
+        /// </summary>
         public void SwitchCamera()
         {
-            if (rearVirtualCamera == null || frontVirtualCamera == null)
+            if (cameraStateManager == null)
             {
-                Debug.LogWarning("CameraSwitcher: Camera references not set!");
+                Debug.LogError("CameraSwitcher: CameraStateManager not assigned!");
                 return;
             }
-
-            if (isRearActive)
-            {
-                // Switch to front camera
-                rearVirtualCamera.Priority = inactivePriority;
-                frontVirtualCamera.Priority = activePriority;
-                isRearActive = false;
-                Debug.Log("Camera: Switched to Front");
-            }
-            else
-            {
-                // Switch to rear camera
-                frontVirtualCamera.Priority = inactivePriority;
-                rearVirtualCamera.Priority = activePriority;
-                isRearActive = true;
-                Debug.Log("Camera: Switched to Rear");
-            }
+            
+            // Delegate to CameraStateManager to handle the toggle
+            cameraStateManager.ToggleDrivingView();
         }
 
         /// <summary>
-        /// Force rear camera active (useful when entering vehicle)
+        /// Force primary camera active (useful when entering vehicle)
+        /// No longer needed but kept for backward compatibility
         /// </summary>
         public void ForceRearCamera()
         {
-            if (rearVirtualCamera == null || frontVirtualCamera == null) return;
-
-            rearVirtualCamera.Priority = activePriority;
-            frontVirtualCamera.Priority = inactivePriority;
-            isRearActive = true;
+            // Primary camera is already activated by CameraStateManager when entering driving state
+            Debug.Log("CameraSwitcher: ForceRearCamera() called - CameraStateManager handles this automatically");
         }
     }
 }

@@ -3,27 +3,28 @@ using Cinemachine;
 
 /// <summary>
 /// Manages camera priority transitions during player state changes
+/// Supports FreeLook primary camera with optional top-down alternate view
 /// Ensures smooth camera blending without black screens
 /// </summary>
 public class CameraStateManager : MonoBehaviour
 {
     [Header("Camera References")]
-    [Tooltip("Driving cameras (Rear and Front virtual cameras on car)")]
-    public CinemachineVirtualCamera rearDrivingCamera;
-    public CinemachineVirtualCamera frontDrivingCamera;
+    [Tooltip("Primary driving camera (FreeLook or VirtualCamera) - the main view")]
+    public CinemachineVirtualCameraBase drivingCamera;
     
-    [Tooltip("Walking camera (FreeLook or Follow for character)")]
+    [Tooltip("Alternate top-down GPS-style camera (optional - toggled with CameraSwitcher)")]
+    public CinemachineVirtualCamera topDownCamera;
+    
+    [Tooltip("Walking camera (FreeLook or VirtualCamera for character)")]
     public CinemachineVirtualCamera walkingCamera;
     
     [Header("Priority Settings")]
     [SerializeField] private int activePriority = 10;
+    [SerializeField] private int alternatePriority = 5; // For top-down when not active
     [SerializeField] private int inactivePriority = 0;
     
-    [Header("Transition Settings")]
-    [Tooltip("Delay before disabling GameObjects (allows camera blend to complete)")]
-    [SerializeField] private float transitionDelay = 0.3f;
-    
-    private CinemachineVirtualCamera currentActiveCamera;
+    private CinemachineVirtualCameraBase currentActiveCamera;
+    private bool isTopDownActive = false;
     
     void Start()
     {
@@ -53,41 +54,32 @@ public class CameraStateManager : MonoBehaviour
     }
     
     /// <summary>
-    /// Switch to driving camera (rear camera by default)
+    /// Switch to driving camera (primary FreeLook by default)
     /// </summary>
     public void ActivateDrivingCamera()
     {
-        if (rearDrivingCamera == null)
+        if (drivingCamera == null)
         {
-            Debug.LogError("CameraStateManager: Rear driving camera not assigned!");
+            Debug.LogError("CameraStateManager: Driving camera not assigned!");
             return;
         }
         
-        // Set driving camera to high priority
-        rearDrivingCamera.Priority = activePriority;
-        if (frontDrivingCamera != null)
-            frontDrivingCamera.Priority = inactivePriority; // Keep front camera ready but inactive
+        // Set primary driving camera to high priority
+        drivingCamera.Priority = activePriority;
         
-        // Set walking camera to low priority
+        // Set top-down to standby (lower priority but ready to switch)
+        if (topDownCamera != null)
+            topDownCamera.Priority = alternatePriority;
+        
+        // Set walking camera to inactive
         if (walkingCamera != null)
             walkingCamera.Priority = inactivePriority;
         
-        currentActiveCamera = rearDrivingCamera;
+        currentActiveCamera = drivingCamera;
+        isTopDownActive = false;
         
-        Debug.Log("Camera: Switched to Driving (Rear)");
-
-        // NEW: Force CameraSwitcher to reset to rear camera
-        var cameraSwitcher = FindFirstObjectByType<PolyStang.CameraSwitcher>();
-        if (cameraSwitcher != null)
-        {
-            cameraSwitcher.ForceRearCamera();
-        }
-        
-        currentActiveCamera = rearDrivingCamera;
-    
-        Debug.Log("Camera: Switched to Driving (Rear)");
+        Debug.Log("Camera: Switched to Driving (Primary)");
     }
-    
     
     /// <summary>
     /// Switch to walking camera
@@ -103,39 +95,73 @@ public class CameraStateManager : MonoBehaviour
         // Set walking camera to high priority FIRST (prevents black screen)
         walkingCamera.Priority = activePriority;
         
-        // Then lower driving camera priorities
-        if (rearDrivingCamera != null)
-            rearDrivingCamera.Priority = inactivePriority;
-        if (frontDrivingCamera != null)
-            frontDrivingCamera.Priority = inactivePriority;
+        // Lower both driving cameras to inactive
+        if (drivingCamera != null)
+            drivingCamera.Priority = inactivePriority;
+        if (topDownCamera != null)
+            topDownCamera.Priority = inactivePriority;
         
         currentActiveCamera = walkingCamera;
+        isTopDownActive = false;
         
         Debug.Log("Camera: Switched to Walking");
     }
     
     /// <summary>
+    /// Toggle between primary driving camera and top-down view
+    /// Called by CameraSwitcher when player presses camera switch button
+    /// </summary>
+    public void ToggleDrivingView()
+    {
+        if (drivingCamera == null || topDownCamera == null)
+        {
+            Debug.LogWarning("CameraStateManager: Cannot toggle - cameras not assigned!");
+            return;
+        }
+        
+        // Only toggle if we're in driving state
+        if (PlayerStateManager.Instance == null || 
+            PlayerStateManager.Instance.CurrentState != PlayerStateManager.PlayerState.Driving)
+        {
+            Debug.LogWarning("CameraStateManager: Cannot toggle camera - not in driving state!");
+            return;
+        }
+        
+        if (isTopDownActive)
+        {
+            // Switch back to primary driving camera
+            drivingCamera.Priority = activePriority;
+            topDownCamera.Priority = alternatePriority;
+            currentActiveCamera = drivingCamera;
+            isTopDownActive = false;
+            
+            Debug.Log("Camera: Switched to Primary Driving View");
+        }
+        else
+        {
+            // Switch to top-down view
+            topDownCamera.Priority = activePriority;
+            drivingCamera.Priority = alternatePriority;
+            currentActiveCamera = topDownCamera;
+            isTopDownActive = true;
+            
+            Debug.Log("Camera: Switched to Top-Down View");
+        }
+    }
+    
+    /// <summary>
     /// Get the currently active camera
     /// </summary>
-    public CinemachineVirtualCamera GetActiveCamera()
+    public CinemachineVirtualCameraBase GetActiveCamera()
     {
         return currentActiveCamera;
     }
     
     /// <summary>
-    /// Manual camera switch (for debugging or special cases)
+    /// Check if currently using top-down view
     /// </summary>
-    public void SwitchToCamera(CinemachineVirtualCamera targetCamera)
+    public bool IsTopDownActive()
     {
-        if (targetCamera == null) return;
-        
-        // Lower all camera priorities
-        if (rearDrivingCamera != null) rearDrivingCamera.Priority = inactivePriority;
-        if (frontDrivingCamera != null) frontDrivingCamera.Priority = inactivePriority;
-        if (walkingCamera != null) walkingCamera.Priority = inactivePriority;
-        
-        // Raise target camera priority
-        targetCamera.Priority = activePriority;
-        currentActiveCamera = targetCamera;
+        return isTopDownActive;
     }
 }

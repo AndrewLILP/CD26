@@ -404,12 +404,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: becf04fb24e34ee43ba5ad2e5fb0915e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraStateManager
-  rearDrivingCamera: {fileID: 521987149}
-  frontDrivingCamera: {fileID: 0}
+  drivingCamera: {fileID: 1400745904}
+  topDownCamera: {fileID: 521987149}
   walkingCamera: {fileID: 3203261900171264388}
   activePriority: 10
+  alternatePriority: 5
   inactivePriority: 5
-  transitionDelay: 0.3
 --- !u!114 &97941933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1308,8 +1308,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 521987148}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.39024264, y: 0.000000032627316, z: -0.000000013829046, w: 0.92071205}
-  m_LocalPosition: {x: 0, y: 31.999998, z: -30}
+  m_LocalRotation: {x: 0.67118794, y: 0.00000003281282, z: -0.000000029709886, w: 0.74128723}
+  m_LocalPosition: {x: 0, y: 202, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2191,10 +2191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85559f3485da3ce40a16a56bd53d2f6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PolyStang.CameraSwitcher
-  rearVirtualCamera: {fileID: 521987149}
-  frontVirtualCamera: {fileID: 0}
-  activePriority: 10
-  inactivePriority: 5
+  cameraStateManager: {fileID: 97941932}
 --- !u!114 &962338030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3610,7 +3607,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Cinemachine::Cinemachine.CinemachineTransposer
   m_BindingMode: 4
-  m_FollowOffset: {x: 0, y: 30, z: -10}
+  m_FollowOffset: {x: 0, y: 200, z: 0}
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
