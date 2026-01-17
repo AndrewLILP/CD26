@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 /// <summary>
 /// Central state machine that manages player states (Driving, Walking, InBuilding)
-/// Singleton pattern - access via PlayerStateManager.Instance
+/// FIXED: Properly cancels delayed disable coroutines to prevent race conditions
 /// </summary>
 public class PlayerStateManager : MonoBehaviour
 {
@@ -12,41 +12,33 @@ public class PlayerStateManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton pattern
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Persist across scenes
+        DontDestroyOnLoad(gameObject);
     }
     #endregion
 
     #region State Definition
     public enum PlayerState
     {
-        Driving,    // Player is controlling a vehicle
-        Walking,    // Player is on foot (third-person)
-        InBuilding  // Player is inside a building (for Sprint 4)
+        Driving,
+        Walking,
+        InBuilding
     }
     #endregion
 
     #region State Management
     [Header("Current State")]
-    [SerializeField] private PlayerState currentState = PlayerState.Walking; // Start on foot by default
+    [SerializeField] private PlayerState currentState = PlayerState.Walking;
     
     public PlayerState CurrentState => currentState;
 
-    /// <summary>
-    /// Events fired when state changes
-    /// Other systems can subscribe to react to state changes
-    /// </summary>
     public UnityEvent<PlayerState> OnStateChanged = new UnityEvent<PlayerState>();
     
-    /// <summary>
-    /// Events for specific state transitions
-    /// </summary>
     public UnityEvent OnEnterDriving = new UnityEvent();
     public UnityEvent OnExitDriving = new UnityEvent();
     public UnityEvent OnEnterWalking = new UnityEvent();
@@ -55,7 +47,7 @@ public class PlayerStateManager : MonoBehaviour
     public UnityEvent OnExitBuilding = new UnityEvent();
     #endregion
 
-    #region References (Set in Phase 3)
+    #region References
     [Header("Player References")]
     [Tooltip("The car GameObject with CarController")]
     public GameObject vehicleObject;
@@ -69,7 +61,7 @@ public class PlayerStateManager : MonoBehaviour
     
     [Header("Timing")]
     [Tooltip("Delay before disabling GameObjects (allows camera blend)")]
-    [SerializeField] private float disableDelay = 0.3f;
+    [SerializeField] private float disableDelay = 0.5f;
     
     [Header("Character Spawn Settings")]
     [Tooltip("Distance from car to spawn character when exiting")]
@@ -81,12 +73,14 @@ public class PlayerStateManager : MonoBehaviour
     // Private tracking
     private Vector3 lastCarPosition;
     private Quaternion lastCarRotation;
+    
+    // CRITICAL FIX: Track coroutines to cancel them
+    private Coroutine vehicleDisableCoroutine;
+    private Coroutine characterDisableCoroutine;
     #endregion
 
     void Start()
     {
-        // Make character and vehicle persist across scenes
-        // NOTE: DontDestroyOnLoad only works on root GameObjects, so we get the root transform
         if (characterObject != null)
         {
             Transform characterRoot = characterObject.transform.root;
@@ -104,9 +98,6 @@ public class PlayerStateManager : MonoBehaviour
 
     #region State Transition Methods
     
-    /// <summary>
-    /// Request a state change (with validation)
-    /// </summary>
     public void RequestStateChange(PlayerState newState)
     {
         if (currentState == newState)
@@ -115,25 +106,21 @@ public class PlayerStateManager : MonoBehaviour
             return;
         }
 
-        // Exit current state
+        // CRITICAL: Cancel any pending disable coroutines before state change
+        CancelPendingDisables();
+
         ExitState(currentState);
         
-        // Change state
         PlayerState previousState = currentState;
         currentState = newState;
         
-        // Enter new state
         EnterState(newState);
         
-        // Fire events
         OnStateChanged?.Invoke(newState);
         
-        Debug.Log($"State changed: {previousState} â†’ {newState}");
+        Debug.Log($"State changed: {previousState} → {newState}");
     }
 
-    /// <summary>
-    /// Enter a new state (activate appropriate systems)
-    /// </summary>
     private void EnterState(PlayerState state)
     {
         switch (state)
@@ -150,9 +137,6 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Exit current state (deactivate systems)
-    /// </summary>
     private void ExitState(PlayerState state)
     {
         switch (state)
@@ -177,24 +161,21 @@ public class PlayerStateManager : MonoBehaviour
     {
         Debug.Log("Entering Driving state");
         
-        // Fire event FIRST (camera switches to high priority)
         OnEnterDriving?.Invoke();
         
         // Activate vehicle immediately
         if (vehicleObject != null)
         {
             vehicleObject.SetActive(true);
-            // Store car's position when entering (for when we exit)
             lastCarPosition = vehicleObject.transform.position;
             lastCarRotation = vehicleObject.transform.rotation;
         }
         
-        // Deactivate character with delay (allows camera blend)
+        // Deactivate character with delay
         if (characterObject != null)
-            StartCoroutine(DelayedDisable(characterObject));
-        
-        // Show speedometer in HUD (Phase 3)
-        // hudController?.ShowSpeedometer();
+        {
+            characterDisableCoroutine = StartCoroutine(DelayedDisable(characterObject));
+        }
     }
 
     private void ExitDrivingState()
@@ -207,7 +188,6 @@ public class PlayerStateManager : MonoBehaviour
     {
         Debug.Log("Entering Walking state");
         
-        // Fire event FIRST (camera switches to high priority)
         OnEnterWalking?.Invoke();
         
         // Activate character immediately
@@ -215,14 +195,12 @@ public class PlayerStateManager : MonoBehaviour
         {
             characterObject.SetActive(true);
             
-            // If we have a stored car position, spawn character near it
+            // Spawn character near car if we have a stored position
             if (vehicleObject != null && lastCarPosition != Vector3.zero)
             {
-                // Calculate spawn position (to the right of car)
                 Vector3 spawnPosition = lastCarPosition + (lastCarRotation * Vector3.right * exitSideOffset);
-                spawnPosition.y = lastCarPosition.y; // Keep at ground level
+                spawnPosition.y = lastCarPosition.y;
                 
-                // Use StateAwareCharacterController to set position (handles CharacterController properly)
                 var characterController = characterObject.GetComponent<StateAwareCharacterController>();
                 if (characterController != null)
                 {
@@ -231,24 +209,19 @@ public class PlayerStateManager : MonoBehaviour
                 }
                 else
                 {
-                    // Fallback: direct transform set
                     characterObject.transform.position = spawnPosition;
+                    Debug.Log($"Character spawned at: {spawnPosition} (fallback)");
                 }
             }
         }
         
-        // Deactivate vehicle with delay (allows camera blend + keeps cameras alive)
         if (vehicleObject != null)
-        {
-            // Update car position before disabling (in case it moved since entering driving)
-            lastCarPosition = vehicleObject.transform.position;
-            lastCarRotation = vehicleObject.transform.rotation;
-            
-            StartCoroutine(DelayedDisable(vehicleObject));
-        }
-        
-        // Hide speedometer in HUD (Phase 3)
-        // hudController?.HideSpeedometer();
+            {
+                lastCarPosition = vehicleObject.transform.position;
+                lastCarRotation = vehicleObject.transform.rotation;
+                // vehicleDisableCoroutine = StartCoroutine(DelayedDisable(vehicleObject)); // REMOVED
+                Debug.Log("Vehicle kept active (scripts disabled by StateAwareCarController)");
+            }
     }
 
     private void ExitWalkingState()
@@ -261,16 +234,13 @@ public class PlayerStateManager : MonoBehaviour
     {
         Debug.Log("Entering Building state (Sprint 4)");
         
-        // Fire event first
         OnEnterBuilding?.Invoke();
         
-        // Deactivate both vehicle and character with delay
+        // Deactivate both with delay
         if (vehicleObject != null)
-            StartCoroutine(DelayedDisable(vehicleObject));
+            vehicleDisableCoroutine = StartCoroutine(DelayedDisable(vehicleObject));
         if (characterObject != null)
-            StartCoroutine(DelayedDisable(characterObject));
-        
-        // Switch to fixed building camera (Sprint 4)
+            characterDisableCoroutine = StartCoroutine(DelayedDisable(characterObject));
     }
 
     private void ExitBuildingState()
@@ -281,20 +251,17 @@ public class PlayerStateManager : MonoBehaviour
 
     #endregion
 
-    #region Debug Helpers (Remove in final build)
+    #region Debug Helpers
 
     void Update()
     {
-        // Track car position while driving (so we know where to spawn character)
         if (currentState == PlayerState.Driving && vehicleObject != null)
         {
             lastCarPosition = vehicleObject.transform.position;
             lastCarRotation = vehicleObject.transform.rotation;
         }
         
-        // Debug key bindings for testing state transitions
-        // Remove these once vehicle interaction is implemented in Phase 3
-        
+        // Debug key bindings
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             RequestStateChange(PlayerState.Driving);
@@ -309,7 +276,6 @@ public class PlayerStateManager : MonoBehaviour
         }
     }
 
-    // Visualize current state in Inspector
     private void OnGUI()
     {
         GUIStyle style = new GUIStyle();
@@ -333,14 +299,61 @@ public class PlayerStateManager : MonoBehaviour
     #region Helper Methods
 
     /// <summary>
+    /// CRITICAL FIX: Cancel any pending disable coroutines before state transitions
+    /// This prevents race conditions where a delayed disable fires after re-enabling
+    /// </summary>
+    private void CancelPendingDisables()
+    {
+        if (vehicleDisableCoroutine != null)
+        {
+            StopCoroutine(vehicleDisableCoroutine);
+            vehicleDisableCoroutine = null;
+            Debug.Log("Cancelled pending vehicle disable");
+        }
+        
+        if (characterDisableCoroutine != null)
+        {
+            StopCoroutine(characterDisableCoroutine);
+            characterDisableCoroutine = null;
+            Debug.Log("Cancelled pending character disable");
+        }
+    }
+
+    /// <summary>
     /// Coroutine to disable a GameObject after a delay
-    /// This allows camera transitions to complete smoothly
     /// </summary>
     private System.Collections.IEnumerator DelayedDisable(GameObject target)
     {
         yield return new WaitForSeconds(disableDelay);
-        target.SetActive(false);
-        Debug.Log($"Delayed disable: {target.name}");
+        
+        // Double-check we're still supposed to disable this
+        // (in case state changed during the delay)
+        bool shouldDisable = false;
+        
+        if (target == vehicleObject && currentState != PlayerState.Driving)
+        {
+            shouldDisable = true;
+        }
+        else if (target == characterObject && currentState != PlayerState.Walking)
+        {
+            shouldDisable = true;
+        }
+        
+        if (shouldDisable)
+        {
+            target.SetActive(false);
+            Debug.Log($"Delayed disable: {target.name}");
+        }
+        else
+        {
+            Debug.Log($"Skipped delayed disable: {target.name} (state changed)");
+        }
+        
+        // Clear the coroutine reference
+        if (target == vehicleObject)
+            vehicleDisableCoroutine = null;
+        else if (target == characterObject)
+            characterDisableCoroutine = null;
     }
 
     #endregion

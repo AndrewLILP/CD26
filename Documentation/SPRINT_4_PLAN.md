@@ -1,6 +1,6 @@
 # Sprint 4: Interaction Systems
 
-**Duration:** 2 weeks (Jan 20 - Feb 2, 2025)  
+**Duration:** 2 weeks (Jan 16 - Jan 30, 2026)  
 **Branch:** sprint-4-interactions  
 **Status:** In Progress
 

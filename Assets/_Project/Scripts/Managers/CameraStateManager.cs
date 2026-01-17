@@ -75,7 +75,19 @@ public class CameraStateManager : MonoBehaviour
         currentActiveCamera = rearDrivingCamera;
         
         Debug.Log("Camera: Switched to Driving (Rear)");
+
+        // NEW: Force CameraSwitcher to reset to rear camera
+        var cameraSwitcher = FindFirstObjectByType<PolyStang.CameraSwitcher>();
+        if (cameraSwitcher != null)
+        {
+            cameraSwitcher.ForceRearCamera();
+        }
+        
+        currentActiveCamera = rearDrivingCamera;
+    
+        Debug.Log("Camera: Switched to Driving (Rear)");
     }
+    
     
     /// <summary>
     /// Switch to walking camera
