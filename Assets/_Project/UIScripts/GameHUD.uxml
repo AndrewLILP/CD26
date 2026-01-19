@@ -15,6 +15,8 @@
             <ui:Label name="interaction-text" text="Press E to Enter Vehicle" class="interaction-text"/>
         </ui:VisualElement>
     </ui:VisualElement>
+    
+    <!-- PAUSE MENU -->
     <ui:VisualElement name="pause-menu" class="pause-menu hidden">
         <ui:VisualElement name="pause-panel" class="pause-panel">
             <ui:Label text="PAUSED" class="pause-title"/>
@@ -25,16 +27,34 @@
             <ui:Button name="quit-button" text="Quit to Menu" class="menu-button"/>
         </ui:VisualElement>
     </ui:VisualElement>
+    
+    <!-- MISSION PANEL -->
     <ui:VisualElement name="mission-panel" class="mission-panel hidden">
         <ui:VisualElement name="mission-border" class="mission-border">
             <ui:Label name="mission-header" text="MISSION BRIEFING" class="mission-header"/>
             <ui:Label name="mission-name" text="FIRST LAP" class="mission-name"/>
-            <ui:Label name="mission-description" text="Complete one lap around the track. Finish line is at the start/finish banner." class="mission-description"/>
+            <ui:Label name="mission-description" text="Complete one lap around the track." class="mission-description"/>
             <ui:VisualElement name="reward-container" class="reward-container">
                 <ui:Label text="REWARD:" class="reward-label"/>
                 <ui:Label name="mission-reward" text="$500" class="mission-reward-value"/>
             </ui:VisualElement>
             <ui:Button name="mission-accept-button" text="[PRESS ENTER TO START]" class="mission-button"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    
+    <!-- NEW: DIALOGUE PANEL (1992 Aesthetic) -->
+    <ui:VisualElement name="dialogue-panel" class="dialogue-panel hidden">
+        <ui:VisualElement name="dialogue-border" class="dialogue-border">
+            <ui:VisualElement name="dialogue-header-container" class="dialogue-header-container">
+                <ui:Label name="npc-name" text="MARIA" class="npc-name"/>
+                <ui:Label name="npc-title" text="Cafe Owner" class="npc-title"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="dialogue-body" class="dialogue-body">
+                <ui:Label name="dialogue-text" text="Welcome to my cafe! Can I get you something?" class="dialogue-text"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="continue-prompt" class="continue-prompt">
+                <ui:Label text="[PRESS E OR SPACE TO CONTINUE]" class="continue-text"/>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

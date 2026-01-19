@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// Manages the in-game HUD elements (speedometer, cash display)
-/// Attach this to a GameObject in your scene with a UIDocument component
+/// Manages the in-game HUD elements (speedometer, cash display, interaction prompts)
+/// Updated for Sprint 4: Mission 2 with NPC dialogue support
 /// </summary>
 public class HUDController : MonoBehaviour
 {
@@ -23,10 +23,8 @@ public class HUDController : MonoBehaviour
     private Label speedValueLabel;
     private Label cashCurrentLabel;
     private Label cashGoalLabel;
-
     private VisualElement interactionPrompt;
     private Label interactionText;
-
     
     private float updateTimer;
     
@@ -46,8 +44,6 @@ public class HUDController : MonoBehaviour
         speedValueLabel = root.Q<Label>("speed-value");
         cashCurrentLabel = root.Q<Label>("cash-current");
         cashGoalLabel = root.Q<Label>("cash-goal");
-
-        // NEW: Cache interaction prompt
         interactionPrompt = root.Q<VisualElement>("interaction-prompt");
         interactionText = root.Q<Label>("interaction-text");
         
@@ -82,10 +78,9 @@ public class HUDController : MonoBehaviour
         if (carRigidbody == null || speedValueLabel == null) return;
         
         // Convert velocity to km/h
-        float speedMS = carRigidbody.linearVelocity.magnitude; // meters per second
-        float speedKMH = speedMS * 3.6f; // convert to km/h
+        float speedMS = carRigidbody.linearVelocity.magnitude;
+        float speedKMH = speedMS * 3.6f;
         
-        // Update UI (rounded to whole number)
         speedValueLabel.text = Mathf.RoundToInt(speedKMH).ToString();
     }
     
@@ -96,27 +91,19 @@ public class HUDController : MonoBehaviour
     {
         if (cashCurrentLabel == null || cashGoalLabel == null) return;
         
-        // Format currency
         cashCurrentLabel.text = $"${currentCash:N0}";
         cashGoalLabel.text = $"/ ${cashGoal:N0} Goal";
     }
     
-    // === PUBLIC METHODS (Call these from other scripts) ===
+    // === PUBLIC METHODS ===
     
-    /// <summary>
-    /// Add money to player's cash
-    /// </summary>
     public void AddCash(float amount)
     {
         currentCash += amount;
         UpdateCashDisplay();
-        
         Debug.Log($"Cash added: ${amount:N0}. Total: ${currentCash:N0}");
     }
     
-    /// <summary>
-    /// Deduct money from player's cash
-    /// </summary>
     public bool SpendCash(float amount)
     {
         if (currentCash >= amount)
@@ -133,34 +120,22 @@ public class HUDController : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Set a new cash goal
-    /// </summary>
     public void SetCashGoal(float newGoal)
     {
         cashGoal = newGoal;
         UpdateCashDisplay();
     }
     
-    /// <summary>
-    /// Get current cash amount
-    /// </summary>
     public float GetCurrentCash()
     {
         return currentCash;
     }
     
-    /// <summary>
-    /// Check if player has met the cash goal
-    /// </summary>
     public bool HasMetGoal()
     {
         return currentCash >= cashGoal;
     }
     
-    /// <summary>
-    /// Set cash amount directly (for state restoration after scene transitions)
-    /// </summary>
     public void SetCash(float amount)
     {
         currentCash = amount;
@@ -168,13 +143,8 @@ public class HUDController : MonoBehaviour
         Debug.Log($"Cash set to: ${currentCash:N0}");
     }
     
-    // === VEHICLE INTERACTION PROMPTS ===
-    // TODO: These should be implemented with proper UI Toolkit elements
-    // For now, they're placeholder methods to prevent compilation errors
+    // === INTERACTION PROMPTS ===
     
-    /// <summary>
-    /// Show "Press E to Enter Vehicle" prompt
-    /// </summary>
     public void ShowEnterPrompt()
     {
         if (interactionPrompt == null || interactionText == null) return;
@@ -196,5 +166,16 @@ public class HUDController : MonoBehaviour
         if (interactionPrompt == null) return;
         
         interactionPrompt.AddToClassList("hidden");
+    }
+    
+    /// <summary>
+    /// Show "Press E to Talk to [NPC Name]" prompt (NEW for Sprint 4)
+    /// </summary>
+    public void ShowTalkPrompt(string npcName)
+    {
+        if (interactionPrompt == null || interactionText == null) return;
+        
+        interactionText.text = $"Press E to Talk to {npcName}";
+        interactionPrompt.RemoveFromClassList("hidden");
     }
 }

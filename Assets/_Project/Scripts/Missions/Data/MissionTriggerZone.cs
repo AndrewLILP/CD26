@@ -57,15 +57,23 @@ public class MissionTriggerZone : MonoBehaviour
     /// Check if the collider belongs to the player's vehicle
     /// </summary>
     private bool IsPlayerVehicle(Collider other)
+{
+    // Check for walking character (ThirdPersonController in parent hierarchy)
+    if (other.GetComponentInParent<StarterAssets.ThirdPersonController>() != null)
     {
-        // Check for car controller in parent hierarchy
-        if (other.GetComponentInParent<PolyStang.CarController>() != null)
-        {
-            return true;
-        }
-        
-        return false;
+        Debug.Log($"[MissionTrigger '{missionID}'] Character detected: {other.name}");
+        return true;
     }
+    
+    // Check for car controller in parent hierarchy
+    if (other.GetComponentInParent<PolyStang.CarController>() != null)
+    {
+        Debug.Log($"[MissionTrigger '{missionID}'] Vehicle detected: {other.name}");
+        return true;
+    }
+    
+    return false;
+}
     
     /// <summary>
     /// Check if player is currently in driving state

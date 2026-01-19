@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d9d4aa603efbf4ab09085a009aab09, type: 3}
+  m_Name: Dialogue_UncleRay_AssetsVsLiabilities
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  npcName: Uncle Ray
+  npcTitle: Retired Investor
+  dialogueLines:
+  - text: '"Ah, there you are! Maria called ahead. Hop in, I''ll explain on the way."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"See this car? Most people think it''s an ASSET because it''s worth money.
+      Wrong."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"An ASSET puts money IN your pocket. A LIABILITY takes money OUT."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"This car? Gas, insurance, repairs - money OUT. That makes it a LIABILITY."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"But if you use it for Uber, or rent it out when you''re not using it?
+      NOW it''s an asset."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"Same goes for houses. Your family home? Mortgage, taxes, maintenance
+      - money OUT. Liability."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"But a RENTAL property? Tenants pay YOU rent - money IN. Asset."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"The rich get richer because they buy ASSETS. The middle class buys liabilities
+      but THINKS they''re assets."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"Remember: If it doesn''t put money in your pocket every month, it''s
+      not helping you get rich."'
+    delayAfter: 0.5
+    voiceClip: {fileID: 0}
+  - text: '"Now, let''s get to the garage. I''ve got some real estate flyers I want
+      to show you..."
+
+'
+    delayAfter: 0
+    voiceClip: {fileID: 0}
+  lessonTopic: Assets vs Liabilities
+  lessonSummary: 'Assets put money IN your pocket. Liabilities take money OUT.
+
+'
+  linkedMissionID: coffee_run
+  advancesMission: 0
