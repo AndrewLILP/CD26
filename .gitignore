@@ -120,3 +120,11 @@ PC_Build/
 
 Assets/PolyStang/
 Assets/CartoonTrackBathurst/
+
+# Synty/Polygon Asset Store packages
+Assets/PolygonDog/
+Assets/PolygonDog.meta
+Assets/PolygonTown/
+Assets/PolygonTown.meta
+Assets/Synty/
+Assets/Synty.meta
