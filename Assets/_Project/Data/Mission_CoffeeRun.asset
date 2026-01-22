@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MissionData
   missionID: coffee_run
   missionName: Coffee Run
-  missionDescription: Maria at the cafe wants to talk to you. Uncle Ray is waiting
-    at the garage.
+  missionDescription: "1) Maria at the cafe wants to talk to you. \n\n2) Uncle Ray
+    is waiting at the garage."
   cashReward: 100
   requiredMissions:
   - first_lap

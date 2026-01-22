@@ -15,10 +15,10 @@ MonoBehaviour:
   npcName: Uncle Ray
   npcTitle: Retired Investor
   dialogueLines:
-  - text: '"Ah, there you are! Maria called ahead. Hop in, I''ll explain on the way."'
+  - text: '"Ah, there you are! Maria called ahead."'
     delayAfter: 0.5
     voiceClip: {fileID: 0}
-  - text: '"See this car? Most people think it''s an ASSET because it''s worth money.
+  - text: '"See your car? Most people think it''s an ASSET because it''s worth money.
       Wrong."'
     delayAfter: 0.5
     voiceClip: {fileID: 0}
@@ -28,7 +28,7 @@ MonoBehaviour:
   - text: '"This car? Gas, insurance, repairs - money OUT. That makes it a LIABILITY."'
     delayAfter: 0.5
     voiceClip: {fileID: 0}
-  - text: '"But if you use it for Uber, or rent it out when you''re not using it?
+  - text: '"But if you use it as a taxi, or rent it out when you''re not using it?
       NOW it''s an asset."'
     delayAfter: 0.5
     voiceClip: {fileID: 0}
@@ -47,10 +47,8 @@ MonoBehaviour:
       not helping you get rich."'
     delayAfter: 0.5
     voiceClip: {fileID: 0}
-  - text: '"Now, let''s get to the garage. I''ve got some real estate flyers I want
-      to show you..."
-
-'
+  - text: '"Now, do another lap and try to beat your time. Then, come back to the
+      garage. I''ve got some real estate flyers I want to show you..."'
     delayAfter: 0
     voiceClip: {fileID: 0}
   lessonTopic: Assets vs Liabilities
