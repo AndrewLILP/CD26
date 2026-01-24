@@ -1,316 +1,460 @@
-/* ===================================
-   CD26 - Game HUD Styles
-   Sprint 4: Added 1992 Dialogue System
-   =================================== */
-/* Use Unity's default monospace font instead */
-.retro-text {
-    -unity-font-style: normal;
-    font-size: 14px;
+/* ============================================
+   CD26 - GAME HUD STYLESHEET
+   1992 Retro Aesthetic - Cyan on Black
+   Font declarations removed - uses Unity default
+   ============================================ */
+
+/* ============================================
+   GLOBAL STYLES
+   ============================================ */
+
+.hidden {
+    display: none;
 }
 
-/* Base Container */
+/* ============================================
+   HUD CONTAINER (Main Game HUD)
+   ============================================ */
+
 .hud-container {
     width: 100%;
     height: 100%;
     position: absolute;
 }
 
-/* Info Panel (Top Right - Cash Display) */
+/* ============================================
+   INFO PANEL (Top-Left - Cash Display)
+   ============================================ */
+
 .info-panel {
     position: absolute;
     top: 20px;
-    right: 20px;
+    left: 20px;
 }
 
 .cash-display {
-    flex-direction: row;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px 15px;
-    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 2px;
-    border-color: rgb(100, 200, 100);
+    padding: 10px 15px;
 }
 
 .cash-current {
-    color: rgb(100, 255, 100);
-    font-size: 28px;
-    -unity-font-style: bold;
-    margin-right: 5px;
+    font-size: 24px;
+    color: rgb(0, 255, 0); /* Green for money */
+    margin-bottom: 2px;
 }
 
 .cash-goal {
-    color: rgb(150, 150, 150);
-    font-size: 18px;
-    -unity-text-align: middle-left;
+    font-size: 14px;
+    color: rgb(150, 255, 255); /* Lighter cyan */
 }
 
-/* Speedometer (Bottom Left) */
+/* ============================================
+   SPEEDOMETER (Bottom-Right)
+   ============================================ */
+
 .speedometer {
     position: absolute;
-    bottom: 30px;
-    left: 30px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 15px 20px;
-    border-radius: 10px;
+    bottom: 40px;
+    right: 40px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 3px;
-    border-color: rgb(255, 100, 100);
+    padding: 15px 25px;
+    align-items: center;
 }
 
 .speed-value {
-    color: rgb(255, 150, 150);
     font-size: 48px;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
+    color: rgb(0, 255, 255); /* Cyan */
+    -unity-text-align: upper-center;
+    margin-bottom: 5px;
 }
 
 .speed-unit {
-    color: rgb(200, 200, 200);
     font-size: 16px;
-    -unity-text-align: middle-center;
+    color: rgb(150, 255, 255); /* Lighter cyan */
+    -unity-text-align: upper-center;
 }
 
-/* Interaction Prompt (Bottom Center) */
+/* ============================================
+   INTERACTION PROMPT (Bottom-Center)
+   ============================================ */
+
 .interaction-prompt {
     position: absolute;
-    bottom: 80px;
+    bottom: 120px;
     left: 50%;
     translate: -50% 0;
-    background-color: rgba(0, 0, 0, 0.85);
-    padding: 12px 20px;
-    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 2px;
-    border-color: rgb(255, 220, 100);
+    padding: 10px 20px;
 }
 
 .interaction-text {
-    color: rgb(255, 255, 150);
-    font-size: 20px;
-    -unity-text-align: middle-center;
-    -unity-font-style: bold;
+    font-size: 18px;
+    color: rgb(0, 255, 255); /* Cyan */
+    -unity-text-align: upper-center;
 }
 
-/* Pause Menu */
+/* ============================================
+   LAP TIMER PANEL (Top-Right, During Lap)
+   ============================================ */
+
+.lap-timer-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-color: rgb(0, 255, 255); /* Cyan */
+    border-width: 2px;
+    padding: 10px 15px;
+    min-width: 200px;
+}
+
+.lap-time-current {
+    font-size: 18px;
+    color: rgb(0, 255, 255); /* Cyan */
+    margin-bottom: 5px;
+}
+
+.lap-time-best {
+    font-size: 16px;
+    color: rgb(150, 255, 255); /* Lighter cyan */
+}
+
+/* ============================================
+   PAUSE MENU (Full Screen Overlay)
+   ============================================ */
+
 .pause-menu {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .pause-panel {
-    background-color: rgb(30, 30, 30);
+    width: 500px;
+    background-color: rgb(0, 0, 0);
+    border-color: rgb(0, 255, 255); /* Cyan */
+    border-width: 4px;
     padding: 40px;
-    border-radius: 10px;
-    border-width: 3px;
-    border-color: rgb(150, 150, 150);
-    min-width: 400px;
+    align-items: center;
 }
 
 .pause-title {
-    color: white;
     font-size: 48px;
-    -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    color: rgb(0, 255, 255); /* Cyan */
     margin-bottom: 30px;
+    -unity-text-align: upper-center;
 }
 
 .volume-label {
-    color: rgb(200, 200, 200);
     font-size: 18px;
+    color: rgb(0, 255, 255); /* Cyan */
     margin-bottom: 10px;
+    -unity-text-align: upper-center;
 }
 
 .volume-slider {
-    margin-bottom: 5px;
+    width: 300px;
+    margin-bottom: 10px;
+}
+
+.volume-slider:focus {
+    border-color: rgb(0, 255, 255);
 }
 
 .volume-percentage {
-    color: rgb(100, 200, 255);
-    font-size: 24px;
+    font-size: 20px;
+    color: rgb(0, 255, 255); /* Cyan */
+    margin-bottom: 30px;
     -unity-text-align: upper-center;
-    margin-bottom: 20px;
 }
 
 .menu-button {
-    background-color: rgb(50, 50, 50);
-    color: white;
-    font-size: 20px;
-    padding: 15px;
-    margin-top: 10px;
-    border-radius: 5px;
+    width: 300px;
+    background-color: transparent;
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 2px;
-    border-color: rgb(100, 100, 100);
+    color: rgb(0, 255, 255);
+    font-size: 18px;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    transition-duration: 0.2s;
 }
 
 .menu-button:hover {
-    background-color: rgb(70, 70, 70);
-    border-color: rgb(150, 150, 150);
+    background-color: rgb(0, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
-/* Mission Panel */
+.menu-button:active {
+    background-color: rgb(0, 200, 200);
+}
+
+/* ============================================
+   MISSION PANEL (Center Screen)
+   ============================================ */
+
 .mission-panel {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.85);
-    justify-content: center;
     align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .mission-border {
-    background-color: rgb(20, 20, 20);
-    padding: 30px;
+    width: 700px;
+    background-color: rgb(0, 0, 0);
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 4px;
-    border-color: rgb(255, 200, 0);
-    min-width: 500px;
-    max-width: 700px;
+    padding: 40px;
+    align-items: center;
 }
 
 .mission-header {
-    color: rgb(255, 200, 0);
-    font-size: 18px;
-    -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    font-size: 24px;
+    color: rgb(150, 255, 255); /* Lighter cyan */
     margin-bottom: 15px;
-    letter-spacing: 2px;
+    -unity-text-align: upper-center;
 }
 
 .mission-name {
-    color: white;
     font-size: 36px;
-    -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    color: rgb(0, 255, 255); /* Cyan */
     margin-bottom: 20px;
+    -unity-text-align: upper-center;
 }
 
 .mission-description {
-    color: rgb(200, 200, 200);
     font-size: 18px;
-    -unity-text-align: upper-left;
-    margin-bottom: 25px;
+    color: rgb(200, 200, 200); /* Light gray */
+    margin-bottom: 30px;
+    -unity-text-align: upper-center;
     white-space: normal;
+    max-width: 600px;
 }
 
 .reward-container {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
 .reward-label {
-    color: rgb(100, 255, 100);
     font-size: 20px;
-    -unity-font-style: bold;
+    color: rgb(0, 255, 255); /* Cyan */
     margin-right: 10px;
 }
 
 .mission-reward-value {
-    color: rgb(100, 255, 100);
     font-size: 28px;
-    -unity-font-style: bold;
+    color: rgb(0, 255, 0); /* Green for money */
 }
 
 .mission-button {
-    background-color: rgb(255, 200, 0);
-    color: black;
-    font-size: 18px;
-    -unity-font-style: bold;
-    padding: 15px;
-    border-width: 0;
+    background-color: transparent;
+    border-color: rgb(0, 255, 255); /* Cyan */
+    border-width: 2px;
+    color: rgb(0, 255, 255);
+    font-size: 16px;
+    padding: 12px 30px;
+    margin-top: 10px;
+    transition-duration: 0.2s;
 }
 
 .mission-button:hover {
-    background-color: rgb(255, 220, 50);
+    background-color: rgb(0, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
-/* ===================================
-   NEW: 1992 RETRO DIALOGUE PANEL
-   =================================== */
+.mission-button:active {
+    background-color: rgb(0, 200, 200);
+}
+
+/* ============================================
+   DIALOGUE PANEL (Center Screen)
+   ============================================ */
 
 .dialogue-panel {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    justify-content: flex-end;
     align-items: center;
-    padding-bottom: 50px;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .dialogue-border {
-    background-color: rgb(0, 20, 40);
+    width: 800px;
+    background-color: rgb(0, 0, 0);
+    border-color: rgb(0, 255, 255); /* Cyan */
     border-width: 4px;
-    border-color: rgb(0, 180, 255);
-    padding: 0;
-    min-width: 700px;
-    max-width: 800px;
-    /* Retro CRT monitor glow effect */
-    box-shadow: 0 0 20px rgba(0, 180, 255, 0.5);
+    padding: 30px;
 }
 
 .dialogue-header-container {
-    background-color: rgb(0, 100, 180);
-    padding: 10px 15px;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
     border-bottom-width: 2px;
-    border-bottom-color: rgb(0, 180, 255);
+    border-bottom-color: rgb(0, 255, 255);
 }
 
 .npc-name {
-    color: rgb(255, 255, 255);
-    font-size: 24px;
-    -unity-font-style: bold;
-    letter-spacing: 2px;
-    -unity-text-align: upper-left;
-    /* Monospace font for retro feel */
-    -unity-font: resource('Fonts/CourierNew');
+    font-size: 28px;
+    color: rgb(0, 255, 255); /* Cyan */
 }
 
 .npc-title {
-    color: rgb(150, 220, 255);
-    font-size: 14px;
-    letter-spacing: 1px;
-    -unity-text-align: upper-left;
-    margin-top: 2px;
+    font-size: 18px;
+    color: rgb(150, 255, 255); /* Lighter cyan */
+    -unity-text-align: upper-right;
 }
 
 .dialogue-body {
-    background-color: rgb(0, 20, 40);
-    padding: 20px 25px;
-    min-height: 120px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: rgba(0, 255, 255, 0.05);
 }
 
 .dialogue-text {
-    color: rgb(220, 255, 255);
-    font-size: 18px;
+    font-size: 20px;
+    color: rgb(200, 200, 200); /* Light gray */
     white-space: normal;
-    -unity-text-align: upper-left;
-    line-height: 24px;
-    /* Monospace for terminal/computer feel */
-    -unity-font: resource('Fonts/CourierNew');
 }
 
 .continue-prompt {
-    background-color: rgb(0, 60, 100);
-    padding: 8px 15px;
-    border-top-width: 2px;
-    border-top-color: rgb(0, 180, 255);
-    justify-content: center;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .continue-text {
-    color: rgb(100, 200, 255);
     font-size: 14px;
-    -unity-font-style: bold;
-    letter-spacing: 1px;
-    /* Blinking effect would be ideal, but CSS doesn't support it */
-    /* In-game, this could pulse via script */
+    color: rgb(0, 255, 255); /* Cyan */
 }
 
-/* Hidden State */
-.hidden {
-    display: none;
+/* ============================================
+   LAP REWARD PANEL (Center Screen, After Lap)
+   ============================================ */
+
+.lap-reward-panel {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
 }
+
+.reward-border {
+    width: 600px;
+    background-color: rgb(0, 0, 0);
+    border-color: rgb(0, 255, 255); /* Cyan */
+    border-width: 4px;
+    padding: 30px;
+    align-items: center;
+}
+
+.reward-header {
+    font-size: 32px;
+    color: rgb(0, 255, 255); /* Cyan */
+    margin-bottom: 20px;
+    -unity-text-align: upper-center;
+}
+
+.cash-earned {
+    font-size: 48px;
+    color: rgb(0, 255, 0); /* Green for money */
+    margin-bottom: 10px;
+    -unity-text-align: upper-center;
+}
+
+.bonus-label {
+    font-size: 20px;
+    color: rgb(255, 255, 0); /* Yellow for bonus */
+    margin-bottom: 15px;
+    -unity-text-align: upper-center;
+}
+
+.lap-time-display {
+    font-size: 22px;
+    color: rgb(200, 200, 200); /* Light gray */
+    margin-bottom: 20px;
+    -unity-text-align: upper-center;
+}
+
+.message-container {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.reward-message {
+    font-size: 18px;
+    color: rgb(0, 255, 255); /* Cyan */
+    -unity-text-align: upper-center;
+    white-space: normal;
+}
+
+.reward-button {
+    background-color: transparent;
+    border-color: rgb(0, 255, 255); /* Cyan */
+    border-width: 2px;
+    color: rgb(0, 255, 255);
+    font-size: 16px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    transition-duration: 0.2s;
+}
+
+.reward-button:hover {
+    background-color: rgb(0, 255, 255);
+    color: rgb(0, 0, 0);
+}
+
+.reward-button:active {
+    background-color: rgb(0, 200, 200);
+}
+
+/* ============================================
+   OPTIONAL EFFECTS
+   ============================================ */
+
+/* CRT Scanline Effect - Uncomment to enable
+.mission-border::after,
+.dialogue-border::after,
+.reward-border::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('project://database/Assets/_Project/Textures/scanlines.png');
+    opacity: 0.2;
+    pointer-events: none;
+}
+*/
+
+/* Blink Animation for Bonus Label - Uncomment to enable
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0.3; }
+}
+
+.bonus-label {
+    animation-name: blink;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+}
+*/

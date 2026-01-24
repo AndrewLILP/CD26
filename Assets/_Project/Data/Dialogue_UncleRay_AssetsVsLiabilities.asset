@@ -56,4 +56,4 @@ MonoBehaviour:
 
 '
   linkedMissionID: coffee_run
-  advancesMission: 0
+  advancesMission: 1

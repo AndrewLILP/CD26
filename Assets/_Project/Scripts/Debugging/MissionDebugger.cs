@@ -25,6 +25,31 @@ public class MissionDebugger : MonoBehaviour
         {
             CompleteFirstLap();
         }
+
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            DebugMissionState();
+        }
+    }
+
+    void DebugMissionState()
+    {
+        if (MissionManager.Instance == null)
+        {
+            Debug.LogError("MissionManager.Instance is NULL!");
+            return;
+        }
+        
+        Debug.Log("=== MISSION DEBUG ===");
+        Debug.Log($"Current Mission: '{MissionManager.Instance.GetCurrentMission()?.missionID ?? "NONE"}'");
+        Debug.Log($"Missions in Database: {MissionManager.Instance.allMissions.Count}");
+        
+        foreach (var mission in MissionManager.Instance.allMissions)
+        {
+            bool completed = MissionManager.Instance.IsMissionCompleted(mission.missionID);
+            bool available = MissionManager.Instance.IsMissionAvailable(mission.missionID);
+            Debug.Log($"  - {mission.missionID}: Completed={completed}, Available={available}");
+        }
     }
     
     [ContextMenu("Run Full Diagnostics")]

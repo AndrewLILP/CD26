@@ -479,6 +479,7 @@ GameObject:
   - component: {fileID: 105808053}
   - component: {fileID: 105808054}
   - component: {fileID: 105808055}
+  - component: {fileID: 105808056}
   m_Layer: 5
   m_Name: GameHUD
   m_TagString: Untagged
@@ -580,6 +581,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUIController
   typewriterSpeed: 30
   canSkipTypewriter: 1
+--- !u!114 &105808056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105808049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10c50dd150688d743bb1d60e03dc6493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LapRewardUIController
 --- !u!1001 &140221387
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1151,6 +1164,9 @@ MonoBehaviour:
   walkingOnly: 0
   repeatableDialogue: 1
   requiredMissionID: coffee_run
+  isUncleRayGarage: 0
+  postLapBestDialogue: {fileID: 0}
+  postLapRegularDialogue: {fileID: 0}
   hasBeenTalkedTo: 0
   playerNearby: 0
   showDebugGizmos: 1
@@ -1463,6 +1479,9 @@ MonoBehaviour:
   walkingOnly: 1
   repeatableDialogue: 0
   requiredMissionID: coffee_run
+  isUncleRayGarage: 0
+  postLapBestDialogue: {fileID: 0}
+  postLapRegularDialogue: {fileID: 0}
   hasBeenTalkedTo: 0
   playerNearby: 0
   showDebugGizmos: 1
@@ -5106,6 +5125,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LapTimer
   missionID: first_lap
   minimumLapTime: 10
+  baseCashReward: 500
+  personalBestBonus: 100
   showDebugGizmos: 1
   gizmoColor: {r: 0, g: 1, b: 0, a: 0.3}
   lockedColor: {r: 1, g: 0, b: 0, a: 0.3}

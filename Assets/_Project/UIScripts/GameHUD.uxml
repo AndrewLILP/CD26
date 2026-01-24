@@ -14,6 +14,12 @@
         <ui:VisualElement name="interaction-prompt" class="interaction-prompt hidden">
             <ui:Label name="interaction-text" text="Press E to Enter Vehicle" class="interaction-text"/>
         </ui:VisualElement>
+        
+        <!-- NEW: LAP TIMER PANEL (visible during lap) -->
+        <ui:VisualElement name="lap-timer-panel" class="lap-timer-panel hidden">
+            <ui:Label name="current-lap-time" text="Current: 0:00.00" class="lap-time-current"/>
+            <ui:Label name="personal-best-time" text="Best: --:--.-" class="lap-time-best"/>
+        </ui:VisualElement>
     </ui:VisualElement>
     
     <!-- PAUSE MENU -->
@@ -42,7 +48,7 @@
         </ui:VisualElement>
     </ui:VisualElement>
     
-    <!-- NEW: DIALOGUE PANEL (1992 Aesthetic) -->
+    <!-- DIALOGUE PANEL (1992 Aesthetic) -->
     <ui:VisualElement name="dialogue-panel" class="dialogue-panel hidden">
         <ui:VisualElement name="dialogue-border" class="dialogue-border">
             <ui:VisualElement name="dialogue-header-container" class="dialogue-header-container">
@@ -55,6 +61,20 @@
             <ui:VisualElement name="continue-prompt" class="continue-prompt">
                 <ui:Label text="[PRESS E OR SPACE TO CONTINUE]" class="continue-text"/>
             </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+    
+    <!-- NEW: LAP REWARD PANEL (shown after lap completion) -->
+    <ui:VisualElement name="lap-reward-panel" class="lap-reward-panel hidden">
+        <ui:VisualElement name="reward-border" class="reward-border">
+            <ui:Label name="reward-header" text="LAP COMPLETE" class="reward-header"/>
+            <ui:Label name="cash-earned" text="+$500" class="cash-earned"/>
+            <ui:Label name="bonus-label" text="NEW PERSONAL BEST!" class="bonus-label hidden"/>
+            <ui:Label name="lap-time" text="Lap Time: 1:23.45" class="lap-time-display"/>
+            <ui:VisualElement name="message-container" class="message-container">
+                <ui:Label name="reward-message" text="Return to Uncle Ray at the garage" class="reward-message"/>
+            </ui:VisualElement>
+            <ui:Button name="continue-button" text="[PRESS ENTER TO CONTINUE]" class="reward-button"/>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

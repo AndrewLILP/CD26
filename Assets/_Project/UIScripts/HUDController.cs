@@ -2,8 +2,8 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 /// <summary>
-/// Manages the in-game HUD elements (speedometer, cash display, interaction prompts)
-/// Updated for Sprint 4: Mission 2 with NPC dialogue support
+/// Manages the in-game HUD elements (speedometer, cash display, lap timer, interaction prompts)
+/// SPRINT 4 ENHANCED: Lap timer display + NPC dialogue support
 /// </summary>
 public class HUDController : MonoBehaviour
 {
@@ -19,12 +19,17 @@ public class HUDController : MonoBehaviour
     [Tooltip("Speed update frequency (lower = smoother but more expensive)")]
     [SerializeField] private float updateInterval = 0.1f;
     
-    // UI Elements
+    // UI Elements - Core HUD
     private Label speedValueLabel;
     private Label cashCurrentLabel;
     private Label cashGoalLabel;
     private VisualElement interactionPrompt;
     private Label interactionText;
+    
+    // UI Elements - Lap Timer
+    private VisualElement lapTimerPanel;
+    private Label currentLapTimeLabel;
+    private Label personalBestLabel;
     
     private float updateTimer;
     
@@ -47,16 +52,25 @@ public class HUDController : MonoBehaviour
         interactionPrompt = root.Q<VisualElement>("interaction-prompt");
         interactionText = root.Q<Label>("interaction-text");
         
+        // Cache lap timer elements
+        lapTimerPanel = root.Q<VisualElement>("lap-timer-panel");
+        currentLapTimeLabel = root.Q<Label>("current-lap-time");
+        personalBestLabel = root.Q<Label>("personal-best-time");
+        
         // Validate references
         if (speedValueLabel == null) Debug.LogError("HUDController: 'speed-value' label not found!");
         if (cashCurrentLabel == null) Debug.LogError("HUDController: 'cash-current' label not found!");
         if (cashGoalLabel == null) Debug.LogError("HUDController: 'cash-goal' label not found!");
         if (interactionPrompt == null) Debug.LogError("HUDController: 'interaction-prompt' not found!");
         if (interactionText == null) Debug.LogError("HUDController: 'interaction-text' not found!");
+        if (lapTimerPanel == null) Debug.LogError("HUDController: 'lap-timer-panel' not found!");
+        if (currentLapTimeLabel == null) Debug.LogError("HUDController: 'current-lap-time' not found!");
+        if (personalBestLabel == null) Debug.LogError("HUDController: 'personal-best-time' not found!");
      
         // Initialize displays
         UpdateCashDisplay();
-        HideInteractionPrompt(); // Start hidden
+        HideInteractionPrompt();
+        HideLapTimer();
     }
     
     void Update()
@@ -66,6 +80,7 @@ public class HUDController : MonoBehaviour
         if (updateTimer >= updateInterval)
         {
             UpdateSpeedometer();
+            UpdateLapTimer();
             updateTimer = 0f;
         }
     }
@@ -82,6 +97,80 @@ public class HUDController : MonoBehaviour
         float speedKMH = speedMS * 3.6f;
         
         speedValueLabel.text = Mathf.RoundToInt(speedKMH).ToString();
+    }
+    
+    /// <summary>
+    /// Updates the lap timer display during active laps
+    /// </summary>
+    private void UpdateLapTimer()
+    {
+        // Find LapTimer in scene
+        LapTimer lapTimer = FindFirstObjectByType<LapTimer>();
+        if (lapTimer == null) return;
+        
+        if (lapTimer.LapInProgress)
+        {
+            ShowLapTimer();
+            
+            // Update current lap time
+            if (currentLapTimeLabel != null)
+            {
+                currentLapTimeLabel.text = $"Current: {FormatTime(lapTimer.CurrentLapTime)}";
+            }
+            
+            // Update personal best
+            if (personalBestLabel != null)
+            {
+                if (lapTimer.PersonalBest == Mathf.Infinity)
+                {
+                    personalBestLabel.text = "Best: --:--.-";
+                }
+                else
+                {
+                    personalBestLabel.text = $"Best: {FormatTime(lapTimer.PersonalBest)}";
+                }
+            }
+        }
+        else
+        {
+            HideLapTimer();
+        }
+    }
+    
+    /// <summary>
+    /// Format time as MM:SS.ms
+    /// </summary>
+    /// 
+    
+    private string FormatTime(float timeInSeconds)
+    {
+        int minutes = Mathf.FloorToInt(timeInSeconds / 60f);
+        int seconds = Mathf.FloorToInt(timeInSeconds % 60f);
+        int milliseconds = Mathf.FloorToInt((timeInSeconds * 100f) % 100f);
+        
+        return $"{minutes:00}:{seconds:00}.{milliseconds:00}";
+    }
+    
+    /// <summary>
+    /// Show the lap timer panel
+    /// </summary>
+    private void ShowLapTimer()
+    {
+        if (lapTimerPanel != null)
+        {
+            lapTimerPanel.RemoveFromClassList("hidden");
+        }
+    }
+    
+    /// <summary>
+    /// Hide the lap timer panel
+    /// </summary>
+    private void HideLapTimer()
+    {
+        if (lapTimerPanel != null)
+        {
+            lapTimerPanel.AddToClassList("hidden");
+        }
     }
     
     /// <summary>
@@ -179,3 +268,4 @@ public class HUDController : MonoBehaviour
         interactionPrompt.RemoveFromClassList("hidden");
     }
 }
+
