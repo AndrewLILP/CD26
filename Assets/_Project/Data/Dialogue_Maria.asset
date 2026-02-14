@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d9d4aa603efbf4ab09085a009aab09, type: 3}
+  m_Name: Dialogue_Maria
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  npcName: Maria
+  npcTitle: Cafe Owner
+  missionDialogues:
+  - missionID: first_lap
+    dialogueEntries:
+    - dialogueText: Hey there! I've seen you circling that track. You look like you've
+        got some speed in you.
+      eventTrigger: 
+    - dialogueText: Listen, I run this cafe, and I've learned something important
+        - it's not just about making money, it's about how fast the money comes back
+        to you. Keep that in mind.
+      eventTrigger: 
+    - dialogueText: Complete a good lap and come back to see me. I might have some
+        work for someone who can move fast.
+      eventTrigger: 
+  - missionID: coffee_run
+    dialogueEntries:
+    - dialogueText: Perfect timing! I need someone fast and reliable.
+      eventTrigger: 
+    - dialogueText: Can you pick up coffee beans from Downtown Roasters? It's on
+        Main Street, about 2 miles east.
+      eventTrigger: 
+    - dialogueText: I'll pay you $750 for a quick delivery. Gas money and a little
+        extra for your time.
+      eventTrigger: 
+    - dialogueText: Here's the thing though - you're trading your time for money.
+        Fast money, sure, but you stop driving, the money stops coming. Think about
+        that.
+      eventTrigger: 

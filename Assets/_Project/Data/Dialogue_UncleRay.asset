@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d9d4aa603efbf4ab09085a009aab09, type: 3}
+  m_Name: Dialogue_UncleRay
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  npcName: UncleRay
+  npcTitle: Mechanic
+  missionDialogues:
+  - missionID: first_lap
+    dialogueEntries:
+    - dialogueText: So you want to race, huh? That car out there - is it an asset
+        or a liability? Most people get that wrong.
+      eventTrigger: 
+    - dialogueText: An asset puts money IN your pocket. A liability takes money OUT.
+        Your car eats gas, needs repairs... sounds like a liability to me.
+      eventTrigger: 
+    - dialogueText: But if you use it to make money - racing, deliveries, whatever
+        - then maybe it becomes an asset. Complete a lap and we'll talk more.
+      eventTrigger: 
+  - missionID: coffee_run
+    dialogueEntries:
+    - dialogueText: Running errands for Maria, huh? That's working for money.
+      eventTrigger: 
+    - dialogueText: Nothing wrong with that - we all gotta eat. But here's what you
+        should be thinking about...
+      eventTrigger: 
+    - dialogueText: How can you get money working FOR you instead? Maybe save up,
+        buy something that generates income while you sleep. That's the real game.
+      eventTrigger: 

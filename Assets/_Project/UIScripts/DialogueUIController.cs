@@ -4,7 +4,8 @@ using System.Collections;
 
 /// <summary>
 /// Controls the dialogue UI panel for NPC conversations
-/// Attach to the same GameObject as HUDController (the one with UIDocument)
+/// UPDATED: Works with mission-aware DialogueData architecture
+/// Receives DialogueEntry[] arrays instead of full DialogueData
 /// </summary>
 public class DialogueUIController : MonoBehaviour
 {
@@ -18,8 +19,8 @@ public class DialogueUIController : MonoBehaviour
     private VisualElement continuePrompt;
     
     // State
-    private DialogueData currentDialogue;
-    private NPCInteraction currentNPC;
+    private DialogueEntry[] currentDialogueEntries;
+    private string currentNPCName;
     private int currentLineIndex = 0;
     private bool isTyping = false;
     private bool dialogueActive = false;
@@ -82,26 +83,27 @@ public class DialogueUIController : MonoBehaviour
     
     /// <summary>
     /// Start a new dialogue sequence
+    /// UPDATED: Now accepts DialogueEntry[] from mission-aware DialogueData
     /// </summary>
-    public void StartDialogue(DialogueData dialogue, NPCInteraction npc)
+    public void StartDialogue(string npcName, string npcTitle, DialogueEntry[] dialogueEntries)
     {
-        if (dialogue == null || dialogue.dialogueLines.Length == 0)
+        if (dialogueEntries == null || dialogueEntries.Length == 0)
         {
-            Debug.LogError("DialogueUIController: Invalid dialogue data!");
+            Debug.LogError("DialogueUIController: Invalid dialogue entries!");
             return;
         }
         
-        currentDialogue = dialogue;
-        currentNPC = npc;
+        currentDialogueEntries = dialogueEntries;
+        currentNPCName = npcName;
         currentLineIndex = 0;
         dialogueActive = true;
         
         // Populate NPC info
         if (npcNameLabel != null)
-            npcNameLabel.text = dialogue.npcName.ToUpper();
+            npcNameLabel.text = npcName.ToUpper();
         
         if (npcTitleLabel != null)
-            npcTitleLabel.text = dialogue.npcTitle;
+            npcTitleLabel.text = npcTitle;
         
         // Show panel
         if (dialoguePanel != null)
@@ -113,7 +115,7 @@ public class DialogueUIController : MonoBehaviour
         // Display first line
         DisplayCurrentLine();
         
-        Debug.Log($"[DialogueUI] Started dialogue with {dialogue.npcName}");
+        Debug.Log($"[DialogueUI] Started dialogue with {npcName} ({dialogueEntries.Length} entries)");
     }
     
     /// <summary>
@@ -121,25 +123,26 @@ public class DialogueUIController : MonoBehaviour
     /// </summary>
     private void DisplayCurrentLine()
     {
-        if (currentDialogue == null || currentLineIndex >= currentDialogue.dialogueLines.Length)
+        if (currentDialogueEntries == null || currentLineIndex >= currentDialogueEntries.Length)
         {
             EndDialogue();
             return;
         }
         
-        var line = currentDialogue.dialogueLines[currentLineIndex];
+        var entry = currentDialogueEntries[currentLineIndex];
         
         // Hide continue prompt while typing
         if (continuePrompt != null)
             continuePrompt.AddToClassList("hidden");
         
         // Start typewriter effect
-        StartCoroutine(TypewriterEffect(line.text));
+        StartCoroutine(TypewriterEffect(entry.dialogueText));
         
-        // Play voice clip if assigned
-        if (line.voiceClip != null)
+        // Future: Handle entry.eventTrigger if needed
+        if (!string.IsNullOrEmpty(entry.eventTrigger))
         {
-            AudioSource.PlayClipAtPoint(line.voiceClip, Camera.main.transform.position, 0.5f);
+            Debug.Log($"[DialogueUI] Event trigger: {entry.eventTrigger}");
+            // TODO: Implement event system if needed
         }
     }
     
@@ -178,15 +181,15 @@ public class DialogueUIController : MonoBehaviour
     /// </summary>
     private void SkipTypewriter()
     {
-        if (!isTyping || currentDialogue == null) return;
+        if (!isTyping || currentDialogueEntries == null) return;
         
         StopAllCoroutines();
         isTyping = false;
         
         // Show full text
-        if (dialogueTextLabel != null && currentLineIndex < currentDialogue.dialogueLines.Length)
+        if (dialogueTextLabel != null && currentLineIndex < currentDialogueEntries.Length)
         {
-            dialogueTextLabel.text = currentDialogue.dialogueLines[currentLineIndex].text;
+            dialogueTextLabel.text = currentDialogueEntries[currentLineIndex].dialogueText;
         }
         
         // Show continue prompt
@@ -201,7 +204,7 @@ public class DialogueUIController : MonoBehaviour
     {
         currentLineIndex++;
         
-        if (currentLineIndex >= currentDialogue.dialogueLines.Length)
+        if (currentLineIndex >= currentDialogueEntries.Length)
         {
             EndDialogue();
         }
@@ -224,17 +227,11 @@ public class DialogueUIController : MonoBehaviour
         // Resume game
         Time.timeScale = 1f;
         
-        // Notify NPC that dialogue is complete
-        if (currentNPC != null)
-        {
-            currentNPC.OnDialogueComplete();
-        }
-        
-        Debug.Log($"[DialogueUI] Ended dialogue with {currentDialogue?.npcName}");
+        Debug.Log($"[DialogueUI] Ended dialogue with {currentNPCName}");
         
         // Clear references
-        currentDialogue = null;
-        currentNPC = null;
+        currentDialogueEntries = null;
+        currentNPCName = null;
         currentLineIndex = 0;
     }
     

@@ -18,7 +18,7 @@ public class PlayerStateManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(transform.root.gameObject);
     }
     #endregion
 

@@ -35,17 +35,15 @@ public class HUDController : MonoBehaviour
     // Debug Panel UI Elements
     private VisualElement debugPanel;
     private Label debugStateLabel;
-    private Label debugControlsLabel;
+    private Label debugMissionLabel;
     private Label debugPositionLabel;
-    private bool isDebugPanelVisible = false;
+    private Label debugControlsLabel;
+    private bool debugPanelVisible = false;
     
     private float updateTimer;
     
     // Reference to LapTimer (cached)
     private LapTimer lapTimer;
-    
-    // Track if Tab is held for showing exit prompt
-    private bool isTabHeld = false;
     
     void Start()
     {
@@ -76,19 +74,20 @@ public class HUDController : MonoBehaviour
         // Cache debug panel elements
         debugPanel = root.Q<VisualElement>("debug-panel");
         debugStateLabel = root.Q<Label>("debug-state");
-        debugControlsLabel = root.Q<Label>("debug-controls");
+        debugMissionLabel = root.Q<Label>("debug-mission");
         debugPositionLabel = root.Q<Label>("debug-position");
+        debugControlsLabel = root.Q<Label>("debug-controls");
         
         // Validate references
         if (speedValueLabel == null) Debug.LogError("HUDController: 'speed-value' label not found!");
         if (cashCurrentLabel == null) Debug.LogError("HUDController: 'cash-current' label not found!");
         if (cashGoalLabel == null) Debug.LogError("HUDController: 'cash-goal' label not found!");
         if (interactionPrompt == null) Debug.LogError("HUDController: 'interaction-prompt' not found!");
-        if (interactionText == null) Debug.LogError("HUDController: 'interaction-text' label not found!");
+        if (interactionText == null) Debug.LogError("HUDController: 'interaction-text' not found!");
         if (lapTimerPanel == null) Debug.LogWarning("HUDController: 'lap-timer-panel' not found! Lap timer display disabled.");
         if (currentLapTimeLabel == null) Debug.LogWarning("HUDController: 'current-lap-time' label not found!");
         if (bestLapTimeLabel == null) Debug.LogWarning("HUDController: 'best-lap-time' label not found!");
-        if (debugPanel == null) Debug.LogWarning("HUDController: 'debug-panel' not found! Debug display disabled.");
+        if (debugPanel == null) Debug.LogWarning("HUDController: 'debug-panel' not found! Debug panel disabled.");
      
         // Initialize displays
         UpdateCashDisplay();
@@ -106,14 +105,11 @@ public class HUDController : MonoBehaviour
     
     void Update()
     {
-        // Handle F12 debug panel toggle
+        // F12 to toggle debug panel
         if (Input.GetKeyDown(KeyCode.F12))
         {
             ToggleDebugPanel();
         }
-        
-        // Track Tab key for showing exit vehicle prompt
-        isTabHeld = Input.GetKey(KeyCode.Tab);
         
         // Update speedometer at intervals (optimization)
         updateTimer += Time.deltaTime;
@@ -121,7 +117,13 @@ public class HUDController : MonoBehaviour
         {
             UpdateSpeedometer();
             UpdateLapTimerDisplay();
-            UpdateDebugPanel();
+            
+            // Update debug panel if visible
+            if (debugPanelVisible)
+            {
+                UpdateDebugPanel();
+            }
+            
             updateTimer = 0f;
         }
     }
@@ -203,55 +205,6 @@ public class HUDController : MonoBehaviour
         int milliseconds = Mathf.FloorToInt((timeInSeconds * 100f) % 100f);
         
         return string.Format("{0:00}:{1:00}.{2:00}", minutes, seconds, milliseconds);
-    }
-    
-    /// <summary>
-    /// Toggle debug panel visibility (F12)
-    /// </summary>
-    private void ToggleDebugPanel()
-    {
-        if (debugPanel == null) return;
-        
-        isDebugPanelVisible = !isDebugPanelVisible;
-        
-        if (isDebugPanelVisible)
-        {
-            debugPanel.RemoveFromClassList("hidden");
-            Debug.Log("[HUD] Debug panel enabled");
-        }
-        else
-        {
-            debugPanel.AddToClassList("hidden");
-            Debug.Log("[HUD] Debug panel disabled");
-        }
-    }
-    
-    /// <summary>
-    /// Update debug panel information
-    /// </summary>
-    private void UpdateDebugPanel()
-    {
-        if (debugPanel == null || !isDebugPanelVisible) return;
-        
-        // Update current state
-        if (debugStateLabel != null && PlayerStateManager.Instance != null)
-        {
-            debugStateLabel.text = $"Current State: {PlayerStateManager.Instance.CurrentState}";
-        }
-        
-        // Update position (using active GameObject's position)
-        if (debugPositionLabel != null && PlayerStateManager.Instance != null)
-        {
-            GameObject activeObject = PlayerStateManager.Instance.CurrentState == PlayerStateManager.PlayerState.Driving 
-                ? PlayerStateManager.Instance.vehicleObject 
-                : PlayerStateManager.Instance.characterObject;
-                
-            if (activeObject != null)
-            {
-                Vector3 pos = activeObject.transform.position;
-                debugPositionLabel.text = $"Position: ({pos.x:F1}, {pos.y:F1}, {pos.z:F1})";
-            }
-        }
     }
     
     /// <summary>
@@ -350,13 +303,6 @@ public class HUDController : MonoBehaviour
     {
         if (interactionPrompt == null || interactionText == null) return;
         
-        // Only show exit prompt when Tab is held
-        if (!isTabHeld) 
-        {
-            HideInteractionPrompt();
-            return;
-        }
-        
         interactionText.text = "Press E to Exit Vehicle";
         interactionPrompt.RemoveFromClassList("hidden");
     }
@@ -417,5 +363,91 @@ public class HUDController : MonoBehaviour
         if (interactionPrompt == null) return;
         
         interactionPrompt.AddToClassList("hidden");
+    }
+    
+    // === DEBUG PANEL (F12) ===
+    
+    /// <summary>
+    /// Toggle debug panel visibility with F12
+    /// </summary>
+    private void ToggleDebugPanel()
+    {
+        if (debugPanel == null) return;
+        
+        debugPanelVisible = !debugPanelVisible;
+        
+        if (debugPanelVisible)
+        {
+            debugPanel.RemoveFromClassList("hidden");
+            Debug.Log("[HUD] Debug panel enabled (F12)");
+        }
+        else
+        {
+            debugPanel.AddToClassList("hidden");
+            Debug.Log("[HUD] Debug panel disabled (F12)");
+        }
+    }
+    
+    /// <summary>
+    /// Update debug panel with current game state
+    /// </summary>
+    private void UpdateDebugPanel()
+    {
+        if (debugPanel == null) return;
+        
+        // Update player state
+        if (PlayerStateManager.Instance != null && debugStateLabel != null)
+        {
+            debugStateLabel.text = $"State: {PlayerStateManager.Instance.CurrentState}";
+        }
+        
+        // Update current mission
+        if (MissionManager.Instance != null && debugMissionLabel != null)
+        {
+            MissionData currentMission = MissionManager.Instance.GetCurrentMission();
+            if (currentMission != null)
+            {
+                debugMissionLabel.text = $"Mission: {currentMission.missionName}";
+            }
+            else
+            {
+                debugMissionLabel.text = "Mission: None";
+            }
+        }
+        
+        // Update player position
+        if (debugPositionLabel != null)
+        {
+            Vector3 pos = Vector3.zero;
+            
+            if (PlayerStateManager.Instance != null)
+            {
+                if (PlayerStateManager.Instance.CurrentState == PlayerStateManager.PlayerState.Driving &&
+                    PlayerStateManager.Instance.vehicleObject != null)
+                {
+                    pos = PlayerStateManager.Instance.vehicleObject.transform.position;
+                }
+                else if (PlayerStateManager.Instance.characterObject != null)
+                {
+                    pos = PlayerStateManager.Instance.characterObject.transform.position;
+                }
+            }
+            
+            debugPositionLabel.text = $"Pos: ({pos.x:F1}, {pos.y:F1}, {pos.z:F1})";
+        }
+        
+        // Update controls (detect input type)
+        if (debugControlsLabel != null)
+        {
+            string controlType = "Keyboard";
+            
+            // Check for gamepad input
+            if (Input.GetJoystickNames().Length > 0 && Input.GetJoystickNames()[0] != "")
+            {
+                controlType = "Gamepad";
+            }
+            
+            debugControlsLabel.text = $"Controls: {controlType}";
+        }
     }
 }

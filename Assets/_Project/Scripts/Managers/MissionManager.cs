@@ -20,7 +20,7 @@ public class MissionManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(transform.root.gameObject);
         
         Debug.Log("[MissionManager] Initialized");
     }

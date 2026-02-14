@@ -1,48 +1,73 @@
 using UnityEngine;
 
 /// <summary>
-/// ScriptableObject that stores NPC dialogue data
-/// Create via: Assets > Create > CD26 > Dialogue Data
+/// Stores all dialogue for a single NPC across multiple missions
+/// Each NPC has ONE DialogueData containing all their mission-specific conversations
+/// ARCHITECTURE: Mission-aware dialogue system for CD26
 /// </summary>
-[CreateAssetMenu(fileName = "NewDialogue", menuName = "CD26/Dialogue Data", order = 2)]
+[CreateAssetMenu(fileName = "Dialogue_NPCName", menuName = "CD26/Dialogue Data")]
 public class DialogueData : ScriptableObject
 {
-    [Header("NPC Info")]
-    [Tooltip("NPC's display name (e.g., 'Maria', 'Uncle Ray')")]
+    [Header("NPC Information")]
+    [Tooltip("Name of the NPC (e.g., 'Maria', 'Uncle Ray')")]
     public string npcName = "NPC";
     
-    [Tooltip("NPC's role/title (e.g., 'Cafe Owner', 'Mentor')")]
-    public string npcTitle = "Unknown";
+    [Tooltip("Title/role (e.g., 'Cafe Owner', 'Mechanic')")]
+    public string npcTitle = "Role";
     
-    [Header("Dialogue Content")]
-    [Tooltip("Lines of dialogue in order")]
-    public DialogueLine[] dialogueLines;
+    [Header("Mission-Specific Dialogues")]
+    [Tooltip("All dialogue sequences for this NPC, mapped by mission")]
+    public MissionDialogue[] missionDialogues;
     
-    [Header("Financial Education")]
-    [Tooltip("What financial concept does this teach? (e.g., 'Cash Flow', 'Assets vs Liabilities')")]
-    public string lessonTopic = "";
-    
-    [TextArea(2, 4)]
-    [Tooltip("Key takeaway message from this conversation")]
-    public string lessonSummary = "";
-    
-    [Header("Mission Integration")]
-    [Tooltip("Mission ID this dialogue is part of (leave empty if standalone)")]
-    public string linkedMissionID = "";
-    
-    [Tooltip("Does completing this dialogue advance/complete the mission?")]
-    public bool advancesMission = false;
-    
-    [System.Serializable]
-    public class DialogueLine
+    /// <summary>
+    /// Find dialogue entries for a specific mission
+    /// Returns null if no dialogue exists for this mission
+    /// </summary>
+    public DialogueEntry[] GetDialogueForMission(string missionID)
     {
-        [TextArea(2, 4)]
-        public string text;
+        foreach (var missionDialogue in missionDialogues)
+        {
+            if (missionDialogue.missionID == missionID)
+            {
+                return missionDialogue.dialogueEntries;
+            }
+        }
         
-        [Tooltip("Optional: Delay before showing next line (seconds)")]
-        public float delayAfter = 0f;
-        
-        [Tooltip("Optional: Play a sound effect when this line appears")]
-        public AudioClip voiceClip;
+        // No dialogue for this mission
+        return null;
     }
+    
+    /// <summary>
+    /// Check if this NPC has dialogue for a specific mission
+    /// </summary>
+    public bool HasDialogueForMission(string missionID)
+    {
+        return GetDialogueForMission(missionID) != null;
+    }
+}
+
+/// <summary>
+/// Maps a mission ID to dialogue entries
+/// </summary>
+[System.Serializable]
+public class MissionDialogue
+{
+    [Tooltip("Mission ID this dialogue is for (e.g., 'first_lap', 'coffee_run')")]
+    public string missionID;
+    
+    [Tooltip("Dialogue entries for this mission")]
+    public DialogueEntry[] dialogueEntries;
+}
+
+/// <summary>
+/// Individual dialogue entry (one "page" of dialogue)
+/// </summary>
+[System.Serializable]
+public class DialogueEntry
+{
+    [TextArea(3, 6)]
+    public string dialogueText;
+    
+    [Tooltip("Optional: Trigger event when this dialogue entry is displayed")]
+    public string eventTrigger = "";
 }

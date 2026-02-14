@@ -1,374 +1,220 @@
 using UnityEngine;
 
 /// <summary>
-/// Attach to NPCs to enable dialogue interactions
-/// Detects player proximity and triggers dialogue UI
-/// SPRINT 4 ENHANCED: Uncle Ray post-lap dialogue selection based on personal best
+/// Handles NPC interaction - checks active mission and triggers appropriate dialogue
+/// Attached to NPC GameObjects with trigger colliders
+/// UPDATED: Added cooldown to prevent E key conflict with vehicle exit
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class NPCInteraction : MonoBehaviour
 {
     [Header("NPC Configuration")]
-    [Tooltip("The dialogue data for this NPC")]
-    public DialogueData dialogueData;
+    [Tooltip("Dialogue data containing all mission-specific dialogues for this NPC")]
+    public DialogueData npcDialogue;
     
-    [Tooltip("Unique identifier for this NPC (e.g., 'maria_cafe', 'uncle_ray_garage')")]
-    public string npcID = "npc_001";
+    [Header("Trigger Settings")]
+    [Tooltip("Tag of player character (usually 'Player')")]
+    public string playerTag = "Player";
     
-    [Header("Interaction Settings")]
-    [Tooltip("Distance at which prompt appears")]
-    [SerializeField] private float interactionRadius = 3.0f;
+    [Tooltip("Show debug logs")]
+    public bool debugMode = true;
     
-    [Tooltip("Only allow interaction when walking (not driving)")]
-    public bool walkingOnly = true;
+    private bool playerInRange = false;
+    private DialogueUIController dialogueUI;
     
-    [Tooltip("Can this NPC be talked to multiple times?")]
-    public bool repeatableDialogue = true;
-    
-    [Header("Mission Integration")]
-    [Tooltip("Optional: Mission that must be active to talk to this NPC")]
-    public string requiredMissionID = "";
-    
-    [Header("Post-Lap Dialogue (Uncle Ray Only)")]
-    [Tooltip("Is this Uncle Ray at the garage? (enables post-lap dialogue selection)")]
-    public bool isUncleRayGarage = false;
-    
-    [Tooltip("Dialogue to show if personal best was beaten")]
-    public DialogueData postLapBestDialogue;
-    
-    [Tooltip("Dialogue to show if personal best was NOT beaten")]
-    public DialogueData postLapRegularDialogue;
-    
-    [Header("State")]
-    [SerializeField] private bool hasBeenTalkedTo = false;
-    [SerializeField] private bool playerNearby = false;
-    
-    [Header("Debug")]
-    [SerializeField] private bool showDebugGizmos = true;
+    // Cooldown to prevent E key conflict with vehicle exit
+    private float interactionCooldown = 0f;
+    private const float COOLDOWN_DURATION = 0.3f;
     
     void Start()
     {
-        // Ensure this GameObject has a trigger collider
+        // Validate configuration
+        if (npcDialogue == null)
+        {
+            Debug.LogError($"[NPCInteraction] No DialogueData assigned to {gameObject.name}!");
+            return;
+        }
+        
+        // Find DialogueUIController in scene
+        dialogueUI = FindFirstObjectByType<DialogueUIController>();
+        if (dialogueUI == null)
+        {
+            Debug.LogError("[NPCInteraction] DialogueUIController not found in scene!");
+        }
+        
+        // Ensure collider is set to trigger
         Collider col = GetComponent<Collider>();
         if (col != null && !col.isTrigger)
         {
-            Debug.LogWarning($"NPCInteraction '{name}': Collider is not a trigger! Setting isTrigger = true.");
+            Debug.LogWarning($"[NPCInteraction] Collider on {gameObject.name} is not set to trigger! Setting now...");
             col.isTrigger = true;
         }
         
-        if (dialogueData == null)
+        if (debugMode)
         {
-            Debug.LogError($"NPCInteraction '{name}': No DialogueData assigned!");
-        }
-        
-        // Validate Uncle Ray setup
-        if (isUncleRayGarage)
-        {
-            if (postLapBestDialogue == null)
-            {
-                Debug.LogError($"NPCInteraction '{name}': isUncleRayGarage is true but postLapBestDialogue not assigned!");
-            }
-            if (postLapRegularDialogue == null)
-            {
-                Debug.LogError($"NPCInteraction '{name}': isUncleRayGarage is true but postLapRegularDialogue not assigned!");
-            }
+            Debug.Log($"[NPCInteraction] {npcDialogue.npcName} initialized");
         }
     }
     
     void Update()
     {
-        // Check for E key press when player is nearby
-        if (Input.GetKeyDown(KeyCode.E))
+        // Update cooldown timer
+        if (interactionCooldown > 0f)
         {
-            Debug.Log($"[NPC '{npcID}'] E key pressed! playerNearby={playerNearby}");
-            
-            if (playerNearby)
-            {
-                Debug.Log($"[NPC '{npcID}'] Player is nearby, checking CanInteract()...");
-                if (CanInteract())
-                {
-                    TriggerDialogue();
-                }
-            }
-            else
-            {
-                Debug.Log($"[NPC '{npcID}'] Player not nearby, ignoring E press");
-            }
+            interactionCooldown -= Time.deltaTime;
         }
         
-        // Update prompt display
-        UpdatePromptDisplay();
+        // If player is in range and presses E (with cooldown check)
+        if (playerInRange && Input.GetKeyDown(KeyCode.E) && interactionCooldown <= 0f)
+        {
+            TryStartDialogue();
+        }
     }
     
     void OnTriggerEnter(Collider other)
     {
-        if (IsPlayer(other))
+        if (other.CompareTag(playerTag))
         {
-            playerNearby = true;
-            Debug.Log($"[NPC '{npcID}'] Player entered interaction radius");
+            playerInRange = true;
+            
+            // Set cooldown when entering NPC range to prevent immediate E key trigger
+            // This prevents dialogue from starting when exiting vehicle with E key
+            interactionCooldown = COOLDOWN_DURATION;
+            
+            // Small delay before checking dialogue (let cooldown start)
+            Invoke(nameof(CheckAndShowPrompt), COOLDOWN_DURATION);
+            
+            if (debugMode)
+            {
+                Debug.Log($"[NPCInteraction] Player entered {npcDialogue.npcName}'s range");
+            }
         }
     }
     
     void OnTriggerExit(Collider other)
     {
-        if (IsPlayer(other))
+        if (other.CompareTag(playerTag))
         {
-            playerNearby = false;
-            HidePrompt();
-            Debug.Log($"[NPC '{npcID}'] Player left interaction radius");
+            playerInRange = false;
+            CancelInvoke(nameof(CheckAndShowPrompt));
+            HideInteractionPrompt();
+            
+            if (debugMode)
+            {
+                Debug.Log($"[NPCInteraction] Player left {npcDialogue.npcName}'s range");
+            }
         }
     }
     
     /// <summary>
-    /// Check if the collider belongs to the player character
+    /// Check dialogue and show prompt (called after cooldown)
     /// </summary>
-    private bool IsPlayer(Collider other)
+    private void CheckAndShowPrompt()
     {
-        // Check for character controller in parent hierarchy
-        if (other.GetComponentInParent<StarterAssets.ThirdPersonController>() != null)
+        if (playerInRange && CanTriggerDialogue())
         {
-            return true;
+            ShowInteractionPrompt();
         }
-        
-        // Fallback: check Player tag
-        if (other.CompareTag("Player"))
-        {
-            return true;
-        }
-        
-        return false;
     }
     
     /// <summary>
-    /// Check if interaction is currently allowed
+    /// Check if dialogue can be triggered (mission active + dialogue exists)
     /// </summary>
-    private bool CanInteract()
+    private bool CanTriggerDialogue()
     {
-        // Check if already talked to
-        if (hasBeenTalkedTo && !repeatableDialogue)
+        // Check if MissionManager exists
+        if (MissionManager.Instance == null)
         {
-            Debug.Log($"[NPC '{npcID}'] ✗ Cannot interact: Already talked to (not repeatable)");
+            if (debugMode) Debug.LogWarning("[NPCInteraction] MissionManager not found!");
             return false;
         }
         
-        // Check if player is in correct state
-        if (walkingOnly && PlayerStateManager.Instance != null)
+        // Get current active mission
+        MissionData currentMission = MissionManager.Instance.GetCurrentMission();
+        
+        if (currentMission == null)
         {
-            if (PlayerStateManager.Instance.CurrentState != PlayerStateManager.PlayerState.Walking)
+            if (debugMode) Debug.Log($"[NPCInteraction] No active mission - {npcDialogue.npcName} remains silent");
+            return false;
+        }
+        
+        // Check if this NPC has dialogue for the current mission
+        bool hasDialogue = npcDialogue.HasDialogueForMission(currentMission.missionID);
+        
+        if (debugMode)
+        {
+            if (hasDialogue)
             {
-                Debug.Log($"[NPC '{npcID}'] ✗ Cannot interact: Player not in Walking state (current: {PlayerStateManager.Instance.CurrentState})");
-                return false;
+                Debug.Log($"[NPCInteraction] {npcDialogue.npcName} has dialogue for mission '{currentMission.missionID}'");
+            }
+            else
+            {
+                Debug.Log($"[NPCInteraction] {npcDialogue.npcName} has no dialogue for mission '{currentMission.missionID}'");
             }
         }
         
-        // Check if required mission is active
-        if (!string.IsNullOrEmpty(requiredMissionID))
-        {
-            if (MissionManager.Instance == null)
-            {
-                Debug.LogError($"[NPC '{npcID}'] ✗ Cannot interact: MissionManager.Instance is null!");
-                return false;
-            }
-            
-            MissionData currentMission = MissionManager.Instance.GetCurrentMission();
-            if (currentMission == null)
-            {
-                Debug.Log($"[NPC '{npcID}'] ✗ Cannot interact: No current mission active (required: '{requiredMissionID}')");
-                return false;
-            }
-            
-            if (currentMission.missionID != requiredMissionID)
-            {
-                Debug.Log($"[NPC '{npcID}'] ✗ Cannot interact: Wrong mission active (required: '{requiredMissionID}', current: '{currentMission.missionID}')");
-                return false;
-            }
-            
-            Debug.Log($"[NPC '{npcID}'] ✓ Mission check passed: '{requiredMissionID}' is active");
-        }
-        
-        Debug.Log($"[NPC '{npcID}'] ✓ CanInteract = true");
-        return true;
+        return hasDialogue;
     }
     
     /// <summary>
-    /// Update the interaction prompt based on state
+    /// Attempt to start dialogue with NPC
     /// </summary>
-    private void UpdatePromptDisplay()
+    private void TryStartDialogue()
     {
-        if (!playerNearby)
+        if (npcDialogue == null || dialogueUI == null)
         {
+            Debug.LogError("[NPCInteraction] Missing references!");
             return;
         }
         
-        if (CanInteract())
-        {
-            ShowPrompt();
-        }
-        else
-        {
-            HidePrompt();
-        }
-    }
-    
-    /// <summary>
-    /// Show "Press E to Talk" prompt
-    /// </summary>
-    private void ShowPrompt()
-    {
-        HUDController hud = FindFirstObjectByType<HUDController>();
-        if (hud != null)
-        {
-            // Determine NPC name for prompt
-            string displayName = dialogueData != null ? dialogueData.npcName : "NPC";
-            
-            // If this is Uncle Ray post-lap, use appropriate dialogue's name
-            if (isUncleRayGarage)
-            {
-                DialogueData activeDialogue = GetPostLapDialogue();
-                if (activeDialogue != null)
-                {
-                    displayName = activeDialogue.npcName;
-                }
-            }
-            
-            hud.ShowTalkPrompt(displayName);
-        }
-    }
-    
-    /// <summary>
-    /// Hide interaction prompt
-    /// </summary>
-    private void HidePrompt()
-    {
-        HUDController hud = FindFirstObjectByType<HUDController>();
-        if (hud != null)
-        {
-            hud.HideInteractionPrompt();
-        }
-    }
-    
-    /// <summary>
-    /// Get the appropriate post-lap dialogue based on LapTimer state
-    /// </summary>
-    private DialogueData GetPostLapDialogue()
-    {
-        if (!isUncleRayGarage)
-        {
-            return dialogueData; // Not Uncle Ray, use default dialogue
-        }
+        // Get current mission
+        if (MissionManager.Instance == null) return;
         
-        // Find LapTimer to check personal best status
-        LapTimer lapTimer = FindFirstObjectByType<LapTimer>();
-        if (lapTimer == null)
+        MissionData currentMission = MissionManager.Instance.GetCurrentMission();
+        if (currentMission == null)
         {
-            Debug.LogWarning($"[NPC '{npcID}'] LapTimer not found! Using default dialogue.");
-            return dialogueData;
-        }
-        
-        // Select dialogue based on whether personal best was beaten
-        if (lapTimer.LastLapBeatPersonalBest)
-        {
-            Debug.Log($"[NPC '{npcID}'] Personal best beaten → using postLapBestDialogue");
-            return postLapBestDialogue != null ? postLapBestDialogue : dialogueData;
-        }
-        else
-        {
-            Debug.Log($"[NPC '{npcID}'] Personal best NOT beaten → using postLapRegularDialogue");
-            return postLapRegularDialogue != null ? postLapRegularDialogue : dialogueData;
-        }
-    }
-    
-    /// <summary>
-    /// Trigger the dialogue UI
-    /// </summary>
-    private void TriggerDialogue()
-    {
-        Debug.Log($"[NPC '{npcID}'] 🎬 TriggerDialogue() called");
-        
-        // Determine which dialogue to show
-        DialogueData activeDialogue = isUncleRayGarage ? GetPostLapDialogue() : dialogueData;
-        
-        if (activeDialogue == null)
-        {
-            Debug.LogError($"[NPC '{npcID}'] ✗ No DialogueData available!");
+            if (debugMode) Debug.Log("[NPCInteraction] No active mission - cannot trigger dialogue");
             return;
         }
         
-        Debug.Log($"[NPC '{npcID}'] DialogueData selected: {activeDialogue.npcName}");
+        // Get dialogue for current mission
+        DialogueEntry[] dialogueEntries = npcDialogue.GetDialogueForMission(currentMission.missionID);
         
-        // Find and trigger DialogueUIController
-        DialogueUIController dialogueUI = FindFirstObjectByType<DialogueUIController>();
-        if (dialogueUI != null)
+        if (dialogueEntries == null || dialogueEntries.Length == 0)
         {
-            Debug.Log($"[NPC '{npcID}'] Found DialogueUIController, starting dialogue...");
-            dialogueUI.StartDialogue(activeDialogue, this);
-            hasBeenTalkedTo = true;
-            
-            Debug.Log($"[NPC '{npcID}'] ✓ Started dialogue: {activeDialogue.npcName}");
+            if (debugMode) Debug.Log($"[NPCInteraction] No dialogue for mission '{currentMission.missionID}'");
+            return;
         }
-        else
-        {
-            Debug.LogError($"[NPC '{npcID}'] ✗ DialogueUIController not found in scene!");
-        }
-    }
-    
-    /// <summary>
-    /// Called by DialogueUIController when dialogue completes
-    /// </summary>
-    public void OnDialogueComplete()
-    {
-        Debug.Log($"[NPC '{npcID}'] Dialogue completed");
         
-        // Determine which dialogue was just shown
-        DialogueData completedDialogue = isUncleRayGarage ? GetPostLapDialogue() : dialogueData;
+        // Start dialogue
+        HideInteractionPrompt();
+        dialogueUI.StartDialogue(npcDialogue.npcName, npcDialogue.npcTitle, dialogueEntries);
         
-        // If this dialogue advances a mission, notify MissionManager
-        if (completedDialogue != null && completedDialogue.advancesMission && MissionManager.Instance != null)
+        if (debugMode)
         {
-            if (!string.IsNullOrEmpty(completedDialogue.linkedMissionID))
-            {
-                MissionManager.Instance.CompleteMission(completedDialogue.linkedMissionID);
-            }
+            Debug.Log($"[NPCInteraction] Started dialogue with {npcDialogue.npcName} for mission '{currentMission.missionID}'");
         }
     }
     
     /// <summary>
-    /// Reset interaction state (useful for testing)
+    /// Show "Press E to Talk" prompt in HUD
     /// </summary>
-    [ContextMenu("Reset Interaction")]
-    public void ResetInteraction()
+    private void ShowInteractionPrompt()
     {
-        hasBeenTalkedTo = false;
-        Debug.Log($"[NPC '{npcID}'] Interaction reset");
+        if (PlayerStateManager.Instance != null && PlayerStateManager.Instance.hudController != null)
+        {
+            PlayerStateManager.Instance.hudController.ShowTalkPrompt(npcDialogue.npcName);
+        }
     }
     
-    void OnDrawGizmos()
+    /// <summary>
+    /// Hide interaction prompt from HUD
+    /// </summary>
+    private void HideInteractionPrompt()
     {
-        if (!showDebugGizmos) return;
-        
-        // Draw interaction radius
-        Gizmos.color = playerNearby ? Color.green : Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactionRadius);
-        
-        #if UNITY_EDITOR
-        // Draw label
-        string stateText = hasBeenTalkedTo ? "(Talked)" : "(Available)";
-        string npcName = "NO DATA";
-        
-        if (isUncleRayGarage)
+        if (PlayerStateManager.Instance != null && PlayerStateManager.Instance.hudController != null)
         {
-            DialogueData activeDialogue = GetPostLapDialogue();
-            npcName = activeDialogue != null ? activeDialogue.npcName + " (Post-Lap)" : "NO DATA";
+            PlayerStateManager.Instance.hudController.HideInteractionPrompt();
         }
-        else if (dialogueData != null)
-        {
-            npcName = dialogueData.npcName;
-        }
-        
-        UnityEditor.Handles.Label(
-            transform.position + Vector3.up * 2.5f,
-            $"NPC: {npcName}\n{stateText}"
-        );
-        #endif
     }
 }

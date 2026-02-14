@@ -10,17 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 65f088015eebfdd4189235203ce293cc, type: 3}
-  m_Name: DueDiligence_Mission
+  m_Name: Mission2_CoffeeRun
   m_EditorClassIdentifier: Assembly-CSharp::MissionData
-  missionID: due_diligence
-  missionName: Due Diligence
-  missionDescription: 'Investigate the car wash business for sale. Get investment
-    advice from Uncle Ray and Maria before making any decisions. Smart investors
-    always do their research!
+  missionID: coffee_run
+  missionName: Coffee Run
+  missionDescription: 'Pick up coffee beans for Maria''s cafe.
 
-'
-  cashReward: 0
+    Quick delivery,
+    quick cash.'
+  cashReward: 750
   requiredMissions:
-  - coffee_run
+  - first_lap
   availableAtStart: 0
   type: 1
