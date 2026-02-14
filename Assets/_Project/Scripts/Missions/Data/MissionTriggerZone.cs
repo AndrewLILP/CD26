@@ -11,6 +11,9 @@ public class MissionTriggerZone : MonoBehaviour
     [Tooltip("The mission to trigger when entering this zone")]
     public string missionID = "first_lap";
     
+    [Tooltip("Display name for UI prompts (e.g., 'For Sale Sign', 'Start Line')")]
+    public string locationDisplayName = "Mission";
+    
     [Header("Trigger Settings")]
     [Tooltip("Only trigger when driving (not walking)")]
     public bool requireDriving = true;
@@ -57,23 +60,15 @@ public class MissionTriggerZone : MonoBehaviour
     /// Check if the collider belongs to the player's vehicle
     /// </summary>
     private bool IsPlayerVehicle(Collider other)
-{
-    // Check for walking character (ThirdPersonController in parent hierarchy)
-    if (other.GetComponentInParent<StarterAssets.ThirdPersonController>() != null)
     {
-        Debug.Log($"[MissionTrigger '{missionID}'] Character detected: {other.name}");
-        return true;
+        // Check for car controller in parent hierarchy
+        if (other.GetComponentInParent<PolyStang.CarController>() != null)
+        {
+            return true;
+        }
+        
+        return false;
     }
-    
-    // Check for car controller in parent hierarchy
-    if (other.GetComponentInParent<PolyStang.CarController>() != null)
-    {
-        Debug.Log($"[MissionTrigger '{missionID}'] Vehicle detected: {other.name}");
-        return true;
-    }
-    
-    return false;
-}
     
     /// <summary>
     /// Check if player is currently in driving state
@@ -119,6 +114,13 @@ public class MissionTriggerZone : MonoBehaviour
             return;
         }
         
+        
+        // TEACHING MOMENT: If walking is required but player is driving, show prompt
+        if (requireDriving == false && IsPlayerDriving())
+        {
+            ShowWalkingRequiredPrompt();
+            return;
+        }
         // Show mission briefing
         MissionUIController missionUI = FindFirstObjectByType<MissionUIController>();
         if (missionUI != null)
@@ -131,6 +133,19 @@ public class MissionTriggerZone : MonoBehaviour
         else
         {
             Debug.LogError("MissionTriggerZone: MissionUIController not found!");
+        }
+    }
+    
+    /// <summary>
+    /// Show teaching prompt when player tries to interact while driving
+    /// </summary>
+    private void ShowWalkingRequiredPrompt()
+    {
+        HUDController hud = FindFirstObjectByType<HUDController>();
+        if (hud != null)
+        {
+            hud.ShowWalkingRequiredPrompt(locationDisplayName);
+            Debug.Log($"[MissionTriggerZone '{missionID}'] Showing walking-required prompt");
         }
     }
     

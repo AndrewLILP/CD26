@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52d9d4aa603efbf4ab09085a009aab09, type: 3}
+  m_Name: DueDiligence_Maria_Dialogue
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueData
+  npcName: Maria
+  npcTitle: Cafe Owner
+  dialogueLines:
+  - text: "\"Ray sent you to me? Smart. He knows I ran my numbers before buying this
+      caf\xE9.\""
+    delayAfter: 1
+    voiceClip: {fileID: 0}
+  - text: '"Car washes can be good investments - they''re simple businesses with
+      predictable cash flow. But you need to verify everything."'
+    delayAfter: 1
+    voiceClip: {fileID: 0}
+  - text: '"Ask yourself: How many customers per day? What''s the average ticket?
+      Are there multiple revenue streams - self-wash, full-service, detailing?"'
+    delayAfter: 1
+    voiceClip: {fileID: 0}
+  - text: '"Here''s the real lesson: Assets should put money in your pocket every
+      month. If a business just breaks even or needs constant babysitting, it''s
+      not a true investment."'
+    delayAfter: 1
+    voiceClip: {fileID: 0}
+  - text: '"Take your time. Good deals don''t disappear overnight. When you''re ready
+      to buy something, you''ll know it''s right."'
+    delayAfter: 1
+    voiceClip: {fileID: 0}
+  lessonTopic: Business Analysis & Cash Flow
+  lessonSummary: Analyze multiple income streams. Assets should generate consistent
+    cash flow.
+  linkedMissionID: due_diligence
+  advancesMission: 1
