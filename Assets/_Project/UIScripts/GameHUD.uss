@@ -458,3 +458,24 @@
     animation-iteration-count: infinite;
 }
 */
+
+/* ============================================
+   DEBUG PANEL (Top-Left, F12 to toggle)
+   ============================================ */
+
+.debug-panel {
+    position: absolute;
+    top: 150px;
+    left: 20px;
+    background-color: rgba(0, 0, 0, 0.9);
+    border-color: rgb(255, 255, 0); /* Yellow for debug */
+    border-width: 2px;
+    padding: 10px 15px;
+    max-width: 350px;
+}
+
+.debug-text {
+    font-size: 14px;
+    color: rgb(255, 255, 0); /* Yellow for debug */
+    margin-bottom: 3px;
+}

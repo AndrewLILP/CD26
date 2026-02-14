@@ -4417,7 +4417,7 @@ MonoBehaviour:
     m_Bits: 0
   m_MinimumDistanceFromTarget: 0.2
   m_AvoidObstacles: 1
-  m_DistanceLimit: 2
+  m_DistanceLimit: 1
   m_MinimumOcclusionTime: 0
   m_CameraRadius: 0.2
   m_Strategy: 0

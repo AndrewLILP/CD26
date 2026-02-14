@@ -18,8 +18,16 @@
         <!-- NEW: LAP TIMER PANEL (visible during lap) -->
         <ui:VisualElement name="lap-timer-panel" class="lap-timer-panel hidden">
             <ui:Label name="current-lap-time" text="Current: 0:00.00" class="lap-time-current"/>
-            <ui:Label name="personal-best-time" text="Best: --:--.-" class="lap-time-best"/>
+            <ui:Label name="best-lap-time" text="Best: --:--.-" class="lap-time-best"/>
         </ui:VisualElement>
+
+        <!-- DEBUG PANEL (F12 to toggle) -->
+        <ui:VisualElement name="debug-panel" class="debug-panel hidden">
+            <ui:Label name="debug-state" text="Current State: Driving" class="debug-text"/>
+            <ui:Label name="debug-controls" text="Press 1=Driving, 2=Walking, 3=Building" class="debug-text"/>
+            <ui:Label name="debug-position" text="Position: (0, 0, 0)" class="debug-text"/>
+        </ui:VisualElement>
+        
     </ui:VisualElement>
     
     <!-- PAUSE MENU -->
